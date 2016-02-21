@@ -62,8 +62,6 @@ public:
 	friend void swap(_vecT& c1, _vecT& c2);//swap the elements of c1 and c2
 
 
-
-
 // Query
 public:
 	T& at(size_type idx) const;
