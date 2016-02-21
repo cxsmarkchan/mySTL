@@ -1,0 +1,14 @@
+*/Debug
+Debug
+/TestResults
+*.ipch
+*.lastbuildstate
+*.vcxproj
+*.filters
+*.user
+*.opensdf
+*.sdf
+*.sln
+*.suo
+*.vsmdi
+*.testsettings
