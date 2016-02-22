@@ -38,7 +38,7 @@ public:
 // Operators
 public:
 	_vecT& operator=(const _vecT& _right);
-	T& operator[](size_type n);
+	T& operator[](size_type n) const;
 
 // Updating
 public:
@@ -91,7 +91,7 @@ public:
 	//rend
 	size_type capacity() const;//allocated storage
 	size_type size() const;//length of datafields
-	size_type max_size() const;//max size, I just don't know what it is
+	//size_type max_size() const;//max size, I just don't know what it is
 	bool empty() const;
 
 

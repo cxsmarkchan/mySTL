@@ -85,7 +85,7 @@ vector<T>& vector<T>::operator=(const vector<T>& _right){
 }
 
 template<class T>
-T& vector<T>::operator[](size_type n){
+T& vector<T>::operator[](size_type n) const{
 	return _arr[n];
 }
 
@@ -293,7 +293,51 @@ void swap(vector<T>& c1, vector<T>& c2){
 
 	T* _tmp_arr = c1._arr;
 	c1._arr = c2._arr;
-	c2._arr = _tmp_arr;}
+	c2._arr = _tmp_arr;
+}
+
+//////////////////////////////////////////////////////////////////////
+// Query
+
+template<class T>
+T& vector<T>::at(size_type idx) const{
+	return _arr[idx];
+}
+
+template<class T>
+T& vector<T>::front() const{
+	return _arr[0];
+}
+
+template<class T>
+T& vector<T>::back() const{
+	return _arr[_size - 1];
+}
+
+template<class T>
+T* vector<T>::begin() const{
+	return _arr;
+}
+
+template<class T>
+T* vector<T>::end() const{
+	return _arr + _size - 1;
+}
+
+template<class T>
+size_type vector<T>::capacity() const{
+	return _capacity;
+}
+
+template<class T>
+size_type vector<T>::size() const{
+	return _size;
+}
+
+template<class T>
+bool vector<T>::empty() const{
+	return (_size == 0);
+}
 
 _CXS_NS_END
 
