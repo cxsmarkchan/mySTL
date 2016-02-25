@@ -13,18 +13,18 @@ _CXS_NS_BEGIN
 //////////////////////////////////////////////////////////////////////////////////////////
 // Constrution & Destruction
 
-template<class T>
-vector<T>::vector():_size(0), _capacity(_CXS_VECTOR_INITIAL_SIZE){
+template<class T, class _Alloc>
+vector<T, _Alloc>::vector():_size(0), _capacity(_CXS_VECTOR_INITIAL_SIZE){
 	_arr = new T[_capacity];
 }
 
-template<class T>
-vector<T>::vector(const size_type size):_size(size), _capacity(size){
+template<class T, class _Alloc>
+vector<T, _Alloc>::vector(const size_type size):_size(size), _capacity(size){
 	_arr = new T[size];
 }
 
-template<class T>
-vector<T>::vector(const _vecT& _right){
+template<class T, class _Alloc>
+vector<T, _Alloc>::vector(const _vecT& _right){
 	_size = _right.size();
 	_capacity = _right.capacity();
 	_arr = new T[_capacity];
@@ -33,8 +33,8 @@ vector<T>::vector(const _vecT& _right){
 	}
 }
 
-template<class T>
-vector<T>::vector(const T* arr, size_type len){
+template<class T, class _Alloc>
+vector<T, _Alloc>::vector(const T* arr, size_type len){
 	_size = _capacity = len;
 	_arr = new T[_capacity];
 	for(size_type i = 0; i < _size; i++){
@@ -42,16 +42,16 @@ vector<T>::vector(const T* arr, size_type len){
 	}
 }
 
-template<class T>
-vector<T>::vector(size_type n, const T& elem):_size(n), _capacity(n){
+template<class T, class _Alloc>
+vector<T, _Alloc>::vector(size_type n, const T& elem):_size(n), _capacity(n){
 	_arr = new T[_capacity];
 	for(size_type i = 0; i < n; i++){
 		_arr[i] = elem;
 	}
 }
 
-template<class T>
-vector<T>::vector(const T* Beg, const T* End){
+template<class T, class _Alloc>
+vector<T, _Alloc>::vector(const T* Beg, const T* End){
 	_size = _capacity = End - Beg;
 	_arr = new T[_capacity];
 	T* now = Beg;
@@ -61,8 +61,8 @@ vector<T>::vector(const T* Beg, const T* End){
 	}
 }
 
-template<class T>
-vector<T>::~vector(){
+template<class T, class _Alloc>
+vector<T, _Alloc>::~vector(){
 	if(_arr != NULL)
 		delete[] _arr;
 }
@@ -70,8 +70,8 @@ vector<T>::~vector(){
 //////////////////////////////////////////////////////////////////////////////////
 // Operators
 
-template<class T>
-vector<T>& vector<T>::operator=(const vector<T>& _right){
+template<class T, class _Alloc>
+vector<T, _Alloc>& vector<T, _Alloc>::operator=(const vector<T, _Alloc>& _right){
 	if(&_vecT != this){
 		if(_arr != NULL) delete[] _arr;
 		_size = _right._size;
@@ -84,8 +84,8 @@ vector<T>& vector<T>::operator=(const vector<T>& _right){
 	return this;
 }
 
-template<class T>
-T& vector<T>::operator[](size_type n) const{
+template<class T, class _Alloc>
+T& vector<T, _Alloc>::operator[](size_type n) const{
 	return _arr[n];
 }
 
@@ -93,8 +93,8 @@ T& vector<T>::operator[](size_type n) const{
 // Updating
 
 // push
-template<class T>
-void vector<T>::push_back(const T& elem){
+template<class T, class _Alloc>
+void vector<T, _Alloc>::push_back(const T& elem){
 	if(_capacity <= _size){
 		reserve(_capacity * 2);
 	}
@@ -102,8 +102,8 @@ void vector<T>::push_back(const T& elem){
 }
 
 // pop
-template<class T>
-void vector<T>::pop_back(){
+template<class T, class _Alloc>
+void vector<T, _Alloc>::pop_back(){
 	_size--;
 	if(_size <= _capacity / 4){
 		reserve(_capacity / 2);
@@ -111,8 +111,8 @@ void vector<T>::pop_back(){
 }
 
 // assign
-template<class T>
-void vector<T>::assign(const T* Beg, const T* End){
+template<class T, class _Alloc>
+void vector<T, _Alloc>::assign(const T* Beg, const T* End){
 	_size = End - Beg;
 	_capacity = _size;
 	T* _new_arr = new T[_capacity];
@@ -125,8 +125,8 @@ void vector<T>::assign(const T* Beg, const T* End){
 
 }
 
-template<class T>
-void vector<T>::assign(size_type n, const T& elem){
+template<class T, class _Alloc>
+void vector<T, _Alloc>::assign(size_type n, const T& elem){
 	_size = _capacity = n;
 	if(_arr != NULL) delete[] _arr;
 	_arr = new T[_capacity];
@@ -136,8 +136,8 @@ void vector<T>::assign(size_type n, const T& elem){
 }
 
 // insert
-template<class T>
-T* vector<T>::insert(const T* pos, const T& elem){
+template<class T, class _Alloc>
+T* vector<T, _Alloc>::insert(const T* pos, const T& elem){
 	if(_capacity <= _size){
 		reserve(_capacity * 2);
 	}
@@ -150,8 +150,8 @@ T* vector<T>::insert(const T* pos, const T& elem){
 }
 
 // insert n elem behind pos
-template<class T>
-void vector<T>::insert(const T* pos, size_type n, const T& elem){
+template<class T, class _Alloc>
+void vector<T, _Alloc>::insert(const T* pos, size_type n, const T& elem){
 	if(_capacity < _size + n){
 		reserve((_size + n) * 2);
 	}
@@ -166,8 +166,8 @@ void vector<T>::insert(const T* pos, size_type n, const T& elem){
 }
 
 // insert [begin, end) behind pos
-template<class T>
-void vector<T>::insert(const T* pos, const T* Beg, const T* End){
+template<class T, class _Alloc>
+void vector<T, _Alloc>::insert(const T* pos, const T* Beg, const T* End){
 	size_type n = End - Beg;
 	if(_capacity < _size + n){
 		reserve((_size + n) * 2);
@@ -187,8 +187,8 @@ void vector<T>::insert(const T* pos, const T* Beg, const T* End){
 // Remove
 
 // clear
-template<class T>
-void vector<T>::clear(){
+template<class T, class _Alloc>
+void vector<T, _Alloc>::clear(){
 	if(_arr != NULL) delete[] _arr;
 	_size = 0;
 	_capacity = _CXS_VECTOR_INITIAL_SIZE;
@@ -196,8 +196,8 @@ void vector<T>::clear(){
 }
 
 //remove the data at pos and return the pointer of the next data
-template<class T>
-T* vector<T>::erase(T* pos){
+template<class T, class _Alloc>
+T* vector<T, _Alloc>::erase(T* pos){
 	_size--;
 	for(size_type i = pos - _arr; i < _size; i++){
 		_arr[i] = _arr[i + 1];
@@ -206,8 +206,8 @@ T* vector<T>::erase(T* pos){
 }
 
 //remove [begin, end) return the next data
-template<class T>
-T* vector<T>::erase(T* Beg, T* End){
+template<class T, class _Alloc>
+T* vector<T, _Alloc>::erase(T* Beg, T* End){
 	size_type n = End - Beg;
 	_size -= n;
 	for(T* cur = Beg; cur < End; cur++){
@@ -218,16 +218,16 @@ T* vector<T>::erase(T* Beg, T* End){
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // about size
-template<class T>
-void vector<T>::resize(size_type new_size){
+template<class T, class _Alloc>
+void vector<T, _Alloc>::resize(size_type new_size){
 	if(_capacity <= new_size){
 		reserve(new_size);
 	}
 	_size = new_size;
 }
 
-template<class T>
-void vector<T>::resize(size_type new_size, const T& elem_fill){
+template<class T, class _Alloc>
+void vector<T, _Alloc>::resize(size_type new_size, const T& elem_fill){
 	if(_capacity <= new_size){
 		reserve(new_size);
 		for(size_type i = _size; i < new_size; i++){
@@ -237,8 +237,8 @@ void vector<T>::resize(size_type new_size, const T& elem_fill){
 	_size = new_size;
 }
 
-template<class T>
-void vector<T>::reserve(size_type new_capacity){
+template<class T, class _Alloc>
+void vector<T, _Alloc>::reserve(size_type new_capacity){
 	if(_capacity <= new_capacity){
 		T* _new_arr = new T[new_capacity];
 		if(_arr != NULL){
@@ -253,21 +253,21 @@ void vector<T>::reserve(size_type new_capacity){
 
 
 // expand if necessary
-template<class T>
-void vector<T>::expand(){
+template<class T, class _Alloc>
+void vector<T, _Alloc>::expand(){
 	if(_capacity <= _size) reserve(_capacity * 2);
 }
 
 // shrink if necessary
-template<class T>
-void vector<T>::shrink(){
+template<class T, class _Alloc>
+void vector<T, _Alloc>::shrink(){
 	if(_size < _capacity / 4) reserve(_capacity / 2);
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // swap
-template<class T>
-void vector<T>::swap(vector<T>& c2){
+template<class T, class _Alloc>
+void vector<T, _Alloc>::swap(vector<T, _Alloc>& c2){
 	size_type _tmp_size = _size;
 	_size = c2._size;
 	c2._size = _tmp_size;
@@ -281,8 +281,8 @@ void vector<T>::swap(vector<T>& c2){
 	c2._arr = _tmp_arr;
 }
 
-template<class T>
-void swap(vector<T>& c1, vector<T>& c2){
+template<class T, class _Alloc>
+void swap(vector<T, _Alloc>& c1, vector<T, _Alloc>& c2){
 	size_type _tmp_size = c1._size;
 	c1._size = c2._size;
 	c2._size = _tmp_size;
@@ -299,43 +299,43 @@ void swap(vector<T>& c1, vector<T>& c2){
 //////////////////////////////////////////////////////////////////////
 // Query
 
-template<class T>
-T& vector<T>::at(size_type idx) const{
+template<class T, class _Alloc>
+T& vector<T, _Alloc>::at(size_type idx) const{
 	return _arr[idx];
 }
 
-template<class T>
-T& vector<T>::front() const{
+template<class T, class _Alloc>
+T& vector<T, _Alloc>::front() const{
 	return _arr[0];
 }
 
-template<class T>
-T& vector<T>::back() const{
+template<class T, class _Alloc>
+T& vector<T, _Alloc>::back() const{
 	return _arr[_size - 1];
 }
 
-template<class T>
-T* vector<T>::begin() const{
+template<class T, class _Alloc>
+T* vector<T, _Alloc>::begin() const{
 	return _arr;
 }
 
-template<class T>
-T* vector<T>::end() const{
+template<class T, class _Alloc>
+T* vector<T, _Alloc>::end() const{
 	return _arr + _size - 1;
 }
 
-template<class T>
-size_type vector<T>::capacity() const{
+template<class T, class _Alloc>
+typename vector<T,_Alloc>::size_type vector<T, _Alloc>::capacity() const{
 	return _capacity;
 }
 
-template<class T>
-size_type vector<T>::size() const{
+template<class T, class _Alloc>
+typename vector<T,_Alloc>::size_type vector<T, _Alloc>::size() const{
 	return _size;
 }
 
-template<class T>
-bool vector<T>::empty() const{
+template<class T, class _Alloc>
+bool vector<T, _Alloc>::empty() const{
 	return (_size == 0);
 }
 

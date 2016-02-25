@@ -10,18 +10,93 @@
 #define _CXS_VECTOR_H_
 
 #include "cxs-commons.h"
+#include "allocator.h"
 
 _CXS_NS_BEGIN
 
-template<class T>
+//V：向量类型
+template<class V, class pointer = typename V::pointer, class reference = typename V::reference>
+class _vector_iterator{
+public:
+	//typedefs
+	typedef _vector_iterator<V, pointer, reference> _Myiter;
+	typedef typename V::pointer _innerPointer;
+	typedef typename V::value_type value_type;
+	typedef typename V::difference_type difference_type;
+
+public:
+	//constructions
+	_vector_iterator():_ptr(NULL){}
+	_vector_iterator(_innerPointer p):_ptr(p){}
+	
+public:
+	//operations
+
+	//*, ->
+	reference operator*() const{return this->_ptr;}
+	pointer operator->() const{return _ptr;}
+
+	//++, --
+	_Myiter& operator++(){_ptr++; return *this;}
+	_Myiter operator++(int){
+		_Myiter tmp = *this;
+		_ptr++;
+		return tmp;
+	}
+	_Myiter& operator--(){_ptr--; return *this;}
+	_Myiter operator--(int){
+		_Myiter tmp = *this;
+		_ptr--;
+		return tmp;
+	}
+
+	//+=, -=, +, -
+	_Myiter& operator+=(difference_type _diff){_ptr += _diff; return *this;}
+	_Myiter& operator-=(difference_type _diff){_ptr -= _diff; return *this;}
+	_Myiter operator+(difference_type _diff) const{return _Myiter(_ptr + _diff);}
+	_Myiter operator-(difference_type _diff) const{return _Myiter(_ptr - _diff);}
+
+	//subscript[]
+	reference operator[](difference_type idx) const{return *(_ptr + idx);}
+
+	//comparisons
+	bool operator==(const _Myiter& _right) const{return _ptr == _right._ptr;}
+	bool operator!=(const _Myiter& _right) const{return _ptr != _right._ptr;}
+	bool operator>(const _Myiter& _right) const{return _ptr > _right._ptr;}
+	bool operator>=(const _Myiter& _right) const{return _ptr >= _right._ptr;}
+	bool operator<(const _Myiter& _right) const{return _ptr < _right._ptr;}
+	bool operator<=(const _Myiter& _right) const{return _ptr <= _right._ptr;}
+	
+protected:
+	_innerPointer _ptr; //维护的指针变量
+};
+
+template<class V>
+class _vector_const_iterator:
+	public _vector_iterator<V, typename V::const_pointer, typename V::const_reference>{
+};
+
+template<class T, class _Alloc = allocator<T>>
 class vector{
+public:
+	//typedefs
+	typedef vector<T, _Alloc> _vecT;
+	typedef _Alloc allocator_type;
+	typedef typename _Alloc::value_type value_type;
+	typedef typename _Alloc::pointer pointer;
+	typedef typename _Alloc::reference reference;
+	typedef typename _Alloc::const_pointer const_pointer;
+	typedef typename _Alloc::const_reference const_reference;
+	typedef typename _Alloc::size_type size_type;
+	typedef typename _Alloc::difference_type difference_type;
+
 //////////////////////////////////////
 // Variables
 protected:
 	T* _arr;
 	size_type _size;
 	size_type _capacity;public:
-	typedef vector<T> _vecT;
+	typedef vector<T, _Alloc> _vecT;
 ////////////////////////////////////////
 // Methods
 // Construction & Destruction

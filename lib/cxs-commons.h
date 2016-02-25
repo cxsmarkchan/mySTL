@@ -7,7 +7,7 @@
 #define _CXS_NS_END }
 
 _CXS_NS_BEGIN
-	typedef int size_type;
+	//typedef int size_type;
 _CXS_NS_END
 
 
