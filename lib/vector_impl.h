@@ -51,13 +51,11 @@ vector<T, _Alloc>::vector(size_type n, const T& elem):_size(n), _capacity(n){
 }
 
 template<class T, class _Alloc>
-vector<T, _Alloc>::vector(const T* Beg, const T* End){
+vector<T, _Alloc>::vector(const_iterator Beg, const_iterator End){
 	_size = _capacity = End - Beg;
 	_arr = new T[_capacity];
-	T* now = Beg;
-	while(now != end){
-		_arr[now - Beg] = *now;
-		now++;
+	for(iterator cur_to = begin(), const_iterator cur_from = Beg; cur_to < end(); cur_to++, cur_from++){
+		*cur_to = *cur_from;
 	}
 }
 
@@ -85,7 +83,12 @@ vector<T, _Alloc>& vector<T, _Alloc>::operator=(const vector<T, _Alloc>& _right)
 }
 
 template<class T, class _Alloc>
-T& vector<T, _Alloc>::operator[](size_type n) const{
+typename vector<T, _Alloc>::reference vector<T, _Alloc>::operator[](size_type n){
+	return _arr[n];
+}
+
+template<class T, class _Alloc>
+typename vector<T, _Alloc>::const_reference vector<T, _Alloc>::operator[](size_type n) const{
 	return _arr[n];
 }
 
@@ -112,8 +115,8 @@ void vector<T, _Alloc>::pop_back(){
 
 // assign
 template<class T, class _Alloc>
-void vector<T, _Alloc>::assign(const T* Beg, const T* End){
-	_size = End - Beg;
+void vector<T, _Alloc>::assign(const_iterator Beg, const_iterator End){
+	_size = (size_type)(End - Beg);
 	_capacity = _size;
 	T* _new_arr = new T[_capacity];
 	for(size_type i = 0; i < _size; i++){
@@ -137,49 +140,53 @@ void vector<T, _Alloc>::assign(size_type n, const T& elem){
 
 // insert
 template<class T, class _Alloc>
-T* vector<T, _Alloc>::insert(const T* pos, const T& elem){
+typename vector<T, _Alloc>::iterator vector<T, _Alloc>::insert(const_iterator pos, const T& elem){
 	if(_capacity <= _size){
 		reserve(_capacity * 2);
 	}
-	size_type index = pos - _arr;
-	for(size_type i = _size; i > index; i--){
-		_arr[i] = _arr[i - 1];
-	}
-	_arr[index] = elem;
+	iterator _pos = _make_iterator(pos);
 	_size++;
+	for(iterator cur = end() - 1; cur > _pos; cur--){
+		*cur = *(cur - 1);
+	}
+	return _pos;
 }
 
 // insert n elem behind pos
 template<class T, class _Alloc>
-void vector<T, _Alloc>::insert(const T* pos, size_type n, const T& elem){
+void vector<T, _Alloc>::insert(const_iterator pos, size_type n, const_reference elem){
 	if(_capacity < _size + n){
 		reserve((_size + n) * 2);
 	}
-	size_type index = pos - _arr;
-	for(size_type i = _size + n - 1; i > index + n - 1; i--){
-		_arr[i] = _arr[i - n];
-	}
-	for(size_type i = index; i < index + n; i++){
-		_arr[i] = elem;
-	}
+
 	_size += n;
+	iterator _insertBegin = _make_iterator(pos);
+	iterator _insertEnd = _insertBegin + n;
+	for(iterator cur = end() - 1; cur >= _insertEnd; cur--){
+		*cur = *(cur - n);
+	}
+	for(iterator cur = _insertBegin; cur < _insertEnd; cur++){
+		*cur = elem;
+	}
 }
 
 // insert [begin, end) behind pos
 template<class T, class _Alloc>
-void vector<T, _Alloc>::insert(const T* pos, const T* Beg, const T* End){
-	size_type n = End - Beg;
+void vector<T, _Alloc>::insert(const_iterator pos, const_iterator Beg, const_iterator End){
+	difference_type n = End - Beg;
 	if(_capacity < _size + n){
 		reserve((_size + n) * 2);
 	}
-	size_type index = pos - _arr;
-	for(size_type i = _size + n - 1; i > index + n - 1; i--){
-		_arr[i] = _arr[i - n];
-	}
-	for(size_type i = index; i < index + n; i++){
-		_arr[i] = *(Beg + i - index);
-	}
+
 	_size += n;
+	iterator _insertBegin = _make_iterator(pos);
+	iterator _insertEnd = _insertBegin + n;
+	for(iterator cur = end() - 1; cur >= _insertEnd; cur--){
+		*cur = *(cur - n);
+	}
+	for(iterator cur_to = _insertBegin, const_iterator cur_from = Beg; cur_to < _insertEnd; cur_to++, cur_from++){
+		*cur_to = *cur_from;
+	}
 }
 
 
@@ -197,30 +204,34 @@ void vector<T, _Alloc>::clear(){
 
 //remove the data at pos and return the pointer of the next data
 template<class T, class _Alloc>
-T* vector<T, _Alloc>::erase(T* pos){
+typename vector<T, _Alloc>::iterator vector<T, _Alloc>::erase(const_iterator pos){
 	_size--;
-	for(size_type i = pos - _arr; i < _size; i++){
-		_arr[i] = _arr[i + 1];
+	iterator _pos = _make_iterator(pos);
+	for(iterator cur = _pos; cur < end(); cur++){
+		*cur = *(cur + 1);
 	}
 	shrink();
+	return _pos;
 }
 
 //remove [begin, end) return the next data
 template<class T, class _Alloc>
-T* vector<T, _Alloc>::erase(T* Beg, T* End){
-	size_type n = End - Beg;
+typename vector<T, _Alloc>::iterator vector<T, _Alloc>::erase(const_iterator Beg, const_iterator End){
+	difference_type n = End - Beg;
 	_size -= n;
-	for(T* cur = Beg; cur < End; cur++){
+	iterator _begin = _make_iterator(Beg);
+	for(iterator cur = _begin; cur < end(); cur++){
 		*cur = *(cur + n);
 	}
 	shrink();
+	return _begin;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // about size
 template<class T, class _Alloc>
 void vector<T, _Alloc>::resize(size_type new_size){
-	if(_capacity <= new_size){
+	if(_size <= new_size){
 		reserve(new_size);
 	}
 	_size = new_size;
@@ -228,7 +239,7 @@ void vector<T, _Alloc>::resize(size_type new_size){
 
 template<class T, class _Alloc>
 void vector<T, _Alloc>::resize(size_type new_size, const T& elem_fill){
-	if(_capacity <= new_size){
+	if(_size <= new_size){
 		reserve(new_size);
 		for(size_type i = _size; i < new_size; i++){
 			_arr[i] = elem_fill;
@@ -239,7 +250,7 @@ void vector<T, _Alloc>::resize(size_type new_size, const T& elem_fill){
 
 template<class T, class _Alloc>
 void vector<T, _Alloc>::reserve(size_type new_capacity){
-	if(_capacity <= new_capacity){
+	if(_size <= new_capacity){
 		T* _new_arr = new T[new_capacity];
 		if(_arr != NULL){
 			for(size_type i = 0; i < _size; i++){
@@ -300,28 +311,53 @@ void swap(vector<T, _Alloc>& c1, vector<T, _Alloc>& c2){
 // Query
 
 template<class T, class _Alloc>
-T& vector<T, _Alloc>::at(size_type idx) const{
+typename vector<T, _Alloc>::reference vector<T, _Alloc>::at(size_type idx){
 	return _arr[idx];
 }
 
 template<class T, class _Alloc>
-T& vector<T, _Alloc>::front() const{
+typename vector<T, _Alloc>::const_reference vector<T, _Alloc>::at(size_type idx) const{
+	return _arr[idx];
+}
+
+template<class T, class _Alloc>
+typename vector<T, _Alloc>::reference vector<T, _Alloc>::front(){
 	return _arr[0];
 }
 
 template<class T, class _Alloc>
-T& vector<T, _Alloc>::back() const{
+typename vector<T, _Alloc>::const_reference vector<T, _Alloc>::front() const{
+	return _arr[0];
+}
+
+template<class T, class _Alloc>
+typename vector<T, _Alloc>::reference vector<T, _Alloc>::back(){
 	return _arr[_size - 1];
 }
 
 template<class T, class _Alloc>
-T* vector<T, _Alloc>::begin() const{
-	return _arr;
+typename vector<T, _Alloc>::const_reference vector<T, _Alloc>::back() const{
+	return _arr[_size - 1];
 }
 
 template<class T, class _Alloc>
-T* vector<T, _Alloc>::end() const{
-	return _arr + _size - 1;
+typename vector<T, _Alloc>::iterator vector<T, _Alloc>::begin(){
+	return iterator(_arr);
+}
+
+template<class T, class _Alloc>
+typename vector<T, _Alloc>::const_iterator vector<T, _Alloc>::begin() const{
+	return const_iterator(_arr);
+}
+
+template<class T, class _Alloc>
+typename vector<T, _Alloc>::iterator vector<T, _Alloc>::end(){
+	return iterator(_arr + _size);
+}
+
+template<class T, class _Alloc>
+typename vector<T, _Alloc>::const_iterator vector<T, _Alloc>::end() const{
+	return const_iterator(_arr + _size);
 }
 
 template<class T, class _Alloc>
