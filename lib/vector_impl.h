@@ -361,6 +361,27 @@ typename vector<T, _Alloc>::const_iterator vector<T, _Alloc>::end() const{
 }
 
 template<class T, class _Alloc>
+typename vector<T, _Alloc>::reverse_iterator vector<T, _Alloc>::rbegin(){
+	return reverse_iterator(_arr + _size - 1);
+}
+
+template<class T, class _Alloc>
+typename vector<T, _Alloc>::const_reverse_iterator vector<T, _Alloc>::rbegin() const{
+	return const_reverse_iterator(_arr + _size - 1);
+}
+
+template<class T, class _Alloc>
+typename vector<T, _Alloc>::reverse_iterator vector<T, _Alloc>::rend(){
+	return reverse_iterator(_arr - 1);
+}
+
+template<class T, class _Alloc>
+typename vector<T, _Alloc>::const_reverse_iterator vector<T, _Alloc>::rend() const{
+	return const_reverse_iterator(_arr - 1);
+}
+
+
+template<class T, class _Alloc>
 typename vector<T,_Alloc>::size_type vector<T, _Alloc>::capacity() const{
 	return _capacity;
 }

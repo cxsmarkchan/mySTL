@@ -10,6 +10,7 @@
 #ifndef _CXS_VECTOR_H_
 #define _CXS_VECTOR_H_
 
+#include <cstdlib>
 #include "cxs-commons.h"
 #include "allocator.h"
 
@@ -79,6 +80,48 @@ class _vector_const_iterator:
 	public _vector_iterator<V, typename V::const_pointer, typename V::const_reference>{
 };
 
+template<class _Iter>
+class _vector_reverse_iterator:
+	public _Iter{
+//一个问题：利用_Iter实现inverse iterator，在调用各种运算符时需要先返回_Iter类型，再返回inverse类型
+//其中涉及内存复制操作，是否会影响效率？（因为iterator操作的调用非常频繁）
+public:
+	typedef _vector_reverse_iterator<_Iter> _Myiter;
+	typedef typename _Iter::_innerPointer _innerPointer;
+	typedef typename _Iter::difference_type difference_type;
+	typedef typename _Iter::reference reference;
+public:
+	_vector_reverse_iterator():_Iter(){}
+	_vector_reverse_iterator(_innerPointer p):_Iter(p){}
+	_vector_reverse_iterator(const _Iter& _base){
+		std::memcpy(this, _base, sizeof(_Iter));
+	}
+public:
+	_Myiter& operator++(){return _Myiter(_Iter::operator--());}
+	_Myiter operator++(int){return _Myiter(_Iter::operator--(0));}
+	_Myiter& operator--(){return _Myiter(_Iter::operator++());}
+	_Myiter operator--(int){return _Myiter(_Iter::operator++(0));}
+
+	//+=, -=, +, -
+	_Myiter& operator+=(difference_type _diff){return _Myiter(_Iter::operator-=(_diff));}
+	_Myiter& operator-=(difference_type _diff){return _Myiter(_Iter::operator+=(_diff));}
+	_Myiter operator+(difference_type _diff) const{return _Myiter(_Iter::operator-(_diff));}
+	_Myiter operator-(difference_type _diff) const{return _Myiter(_Iter::operator+(_diff));}
+	difference_type operator-(const _Myiter& _right) const{return _right._Iter::operator-(*this);}
+
+	//subscript[]
+	reference operator[](difference_type idx) const{return _Iter::operator[](idx);}
+
+	//comparisons
+	bool operator==(const _Myiter& _right) const{return _Iter::operator==(_right);}
+	bool operator!=(const _Myiter& _right) const{return _Iter::operator!=(_right)}
+	bool operator>(const _Myiter& _right) const{return _Iter::operator<(_right);}
+	bool operator>=(const _Myiter& _right) const{return _Iter::operator<=(_right);}
+	bool operator<(const _Myiter& _right) const{return _Iter::operator>(_right);}
+	bool operator<=(const _Myiter& _right) const{return _Iter::operator>=(_right);}
+
+};
+
 template<class T, class _Alloc = allocator<T>>
 class vector{
 public:
@@ -92,8 +135,10 @@ public:
 	typedef typename _Alloc::const_reference const_reference;
 	typedef typename _Alloc::size_type size_type;
 	typedef typename _Alloc::difference_type difference_type;
-	typedef _vector_iterator<vector<T>> iterator;
-	typedef _vector_const_iterator<vector<T>> const_iterator;
+	typedef _vector_iterator<_vecT> iterator;
+	typedef _vector_const_iterator<_vecT> const_iterator;
+	typedef _vector_reverse_iterator<iterator> reverse_iterator;
+	typedef _vector_reverse_iterator<const_iterator> const_reverse_iterator;
 
 //////////////////////////////////////
 // Variables
@@ -174,8 +219,10 @@ public:
 	const_iterator begin() const;
 	iterator end();//iterator of the last data
 	const_iterator end() const;
-	//rbegin
-	//rend
+	reverse_iterator rbegin();
+	const_reverse_iterator rbegin() const;
+	reverse_iterator rend();
+	const_reverse_iterator rend() const;
 	size_type capacity() const;//allocated storage
 	size_type size() const;//length of datafields
 	//size_type max_size() const;//max size, I just don't know what it is
