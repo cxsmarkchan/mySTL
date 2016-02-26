@@ -51,10 +51,13 @@ vector<T, _Alloc>::vector(size_type n, const T& elem):_size(n), _capacity(n){
 }
 
 template<class T, class _Alloc>
-vector<T, _Alloc>::vector(const_iterator Beg, const_iterator End){
+template<class _Iter>
+vector<T, _Alloc>::vector(_Iter Beg, _Iter End){
 	_size = _capacity = End - Beg;
 	_arr = new T[_capacity];
-	for(iterator cur_to = begin(), const_iterator cur_from = Beg; cur_to < end(); cur_to++, cur_from++){
+	iterator cur_to = begin();
+	_Iter cur_from = Beg;
+	for(; cur_to < end(); cur_to++, cur_from++){
 		*cur_to = *cur_from;
 	}
 }

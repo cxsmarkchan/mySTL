@@ -17,11 +17,11 @@
 _CXS_NS_BEGIN
 
 //V：向量类型
-template<class V, class pointer = typename V::pointer, class reference = typename V::reference>
-class _vector_iterator{
+template<class V, class pointer, class reference>
+class _vector_iterator_base{
 public:
 	//typedefs
-	typedef _vector_iterator<V, pointer, reference> _Myiter;
+	typedef _vector_iterator_base<V, pointer, reference> _Myiter;
 	typedef typename V::pointer _innerPointer;
 	typedef typename V::value_type value_type;
 	typedef typename V::difference_type difference_type;
@@ -29,14 +29,14 @@ public:
 
 public:
 	//constructions
-	_vector_iterator():_ptr(NULL){}
-	_vector_iterator(_innerPointer p):_ptr(p){}
+	_vector_iterator_base():_ptr(NULL){}
+	_vector_iterator_base(_innerPointer p):_ptr(p){}
 	
 public:
 	//operations
 
 	//*, ->
-	reference operator*() const{return this->_ptr;}
+	reference operator*() const{return *_ptr;}
 	pointer operator->() const{return _ptr;}
 
 	//++, --
@@ -75,9 +75,48 @@ protected: //stl中该变量是public，不是非常能理解
 	_innerPointer _ptr; //维护的指针变量
 };
 
+
+template<class V>
+class _vector_const_iterator;
+
+template<class V>
+class _vector_iterator:
+	public _vector_iterator_base<V, typename V::pointer, typename V::reference>{
+public:
+	typedef _vector_iterator<V> _Myiter;
+	typedef _vector_iterator_base<V, typename V::pointer, typename V::reference> _Mybase;
+public:
+	_vector_iterator():_vector_iterator_base(){}
+	_vector_iterator(_innerPointer p):_vector_iterator_base(p){}
+	_vector_iterator(const _Mybase& _it):_vector_iterator_base(_it){}
+	friend _vector_const_iterator<V>;
+public:
+	_Myiter& operator=(const _Mybase& _base){
+		if(this != (_Myiter*)&_base){
+			_ptr = _base._ptr;
+		}
+		return *this;
+	}
+};
+
 template<class V>
 class _vector_const_iterator:
-	public _vector_iterator<V, typename V::const_pointer, typename V::const_reference>{
+	public _vector_iterator_base<V, typename V::const_pointer, typename V::const_reference>{
+public:
+	typedef _vector_const_iterator<V> _Myiter;
+	typedef _vector_iterator_base<V, typename V::const_pointer, typename V::const_reference> _Mybase;
+public:
+	_vector_const_iterator():_vector_iterator_base(){}
+	_vector_const_iterator(_innerPointer p):_vector_iterator_base(p){}
+	_vector_const_iterator(const _Mybase& _it):_vector_iterator_base(_it){}
+	_vector_const_iterator(const _vector_iterator<V>& _it):_vector_iterator_base(_it._ptr){}
+public:
+	_Myiter& operator=(const _Mybase& _base){
+		if(this != (_Myiter*)&_base){
+			_ptr = _base._ptr;
+		}
+		return *this;
+	}
 };
 
 template<class _Iter>
@@ -157,7 +196,8 @@ public:
 	vector(const _vecT& _right);//Copy
 	vector(const T* arr, const size_type len);//Copy of an array of T
 	vector(size_type n, const T& elem);//A vector with n elements of elem
-	vector(const_iterator begin, const_iterator end);//copy of elements in [begin, end)
+	template<class _Iter>
+	vector(_Iter begin, _Iter end);//copy of elements in [begin, end)
 
 	virtual ~vector();
 
