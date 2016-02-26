@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "vector.h"
-//#include <vector>
 
 
 using namespace System;
@@ -8,8 +7,6 @@ using namespace System::Text;
 using namespace System::Collections::Generic;
 using namespace Microsoft::VisualStudio::TestTools::UnitTesting;
 using namespace cxs;
-//using namespace std;
-//using namespace std;
 
 namespace test
 {
@@ -22,6 +19,9 @@ namespace test
 	public: 
 		typedef vector<int> _vInt;
 		typedef _vInt::size_type size_type;
+		_vInt* _pVec;
+
+	public:
 		/// <summary>
 		///获取或设置测试上下文，该上下文提供
 		///有关当前测试运行及其功能的信息。
@@ -60,6 +60,17 @@ namespace test
 		//
 		#pragma endregion 
 
+		[TestInitialize()]
+		void TestInitialize(){
+			int a[] = {1, 2, 3, 4};
+			_pVec = new _vInt(a, 4); 
+		}
+
+		[TestCleanup()]
+		void TestCleanup(){
+			delete _pVec;
+		}
+
 		[TestMethod]
 		void TestConstruction()
 		{
@@ -94,6 +105,64 @@ namespace test
 			Assert::AreEqual(vec_5[0], 1);
 			Assert::AreEqual(vec_5[1], 3);
 			
-		};
+		}
+
+		[TestMethod]
+		void TestOperators(){
+			//等号和非const的下标
+			_vInt vec;
+			vec = *_pVec;
+			Assert::AreEqual(vec.size(), (size_type)4);
+			Assert::AreEqual(vec[0], 1);
+			Assert::AreEqual(vec[1], 2);
+			Assert::AreEqual(vec[2], 3);
+			Assert::AreEqual(vec[3], 4);
+
+			//const下标
+			const _vInt vec2 = *_pVec;
+			Assert::AreEqual(vec2.size(), (size_type)4);
+			Assert::AreEqual(vec2[0], 1);
+			Assert::AreEqual(vec2[1], 2);
+			Assert::AreEqual(vec2[2], 3);
+			Assert::AreEqual(vec2[3], 4);
+		}
+
+		[TestMethod]
+		void TestPush(){
+			_pVec->push_back(5);
+			_pVec->push_back(6);
+			for(int i = 0; i < 6; i++){
+				Assert::AreEqual(_pVec->at(i), i + 1);
+			}
+			Assert::AreEqual(_pVec->size(), (size_type)6);
+			Assert::AreEqual(_pVec->capacity(), (size_type)8);
+		}
+
+		[TestMethod]
+		void TestPop(){
+			_pVec->pop_back();
+			_pVec->pop_back();
+			for(int i = 0; i < 2; i++){
+				Assert::AreEqual(_pVec->at(i), i + 1);
+			}
+			Assert::AreEqual(_pVec->size(), (size_type)2);
+		}
+
+		[TestMethod]
+		void TestAssign(){
+			_vInt vec = *_pVec;
+			_vInt::iterator _begin = vec.begin() + 1;
+			_vInt::iterator _end = vec.begin() + 3;
+			_pVec->assign(_begin, _end);
+			Assert::AreEqual(_pVec->size(), (size_type)2);
+			Assert::AreEqual(_pVec->at(0), 2);
+			Assert::AreEqual(_pVec->at(1), 3);
+
+			_pVec->assign((size_type)4, 1);
+			Assert::AreEqual(_pVec->size(), (size_type)4);
+			for(int i = 0; i < 4; i++){
+				Assert::AreEqual(_pVec->at(i), 1);
+			}
+		}
 	};
 }

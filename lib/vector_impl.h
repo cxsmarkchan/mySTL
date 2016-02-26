@@ -73,7 +73,7 @@ vector<T, _Alloc>::~vector(){
 
 template<class T, class _Alloc>
 vector<T, _Alloc>& vector<T, _Alloc>::operator=(const vector<T, _Alloc>& _right){
-	if(&_vecT != this){
+	if(&_right != this){
 		if(_arr != NULL) delete[] _arr;
 		_size = _right._size;
 		_capacity = _right._capacity;
@@ -82,7 +82,7 @@ vector<T, _Alloc>& vector<T, _Alloc>::operator=(const vector<T, _Alloc>& _right)
 			_arr[i] = _right[i];
 		}
 	}
-	return this;
+	return *this;
 }
 
 template<class T, class _Alloc>
@@ -263,6 +263,7 @@ void vector<T, _Alloc>::reserve(size_type new_capacity){
 		}
 		_arr = _new_arr;
 	}
+	_capacity = new_capacity;
 }
 
 
