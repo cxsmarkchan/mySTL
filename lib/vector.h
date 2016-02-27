@@ -25,6 +25,7 @@ public:
 	typedef typename V::pointer _innerPointer;
 	typedef typename V::value_type value_type;
 	typedef typename V::difference_type difference_type;
+	typedef typename V::reference reference;
 	friend V;
 
 public:
@@ -133,7 +134,7 @@ public:
 	_vector_reverse_iterator():_Iter(){}
 	_vector_reverse_iterator(_innerPointer p):_Iter(p){}
 	_vector_reverse_iterator(const _Iter& _base){
-		std::memcpy(this, _base, sizeof(_Iter));
+		std::memcpy(this, &(*_base), sizeof(_Iter));
 	}
 public:
 	_Myiter& operator++(){return _Myiter(_Iter::operator--());}

@@ -265,7 +265,52 @@ namespace test
 			Assert::AreEqual(vec2[1], 6);*/
 		}
 
+		[TestMethod]
+		void TestQueries(){ //所有查询函数的测试
+			//非const
+			//at, begin, end, capacity, size均在前面的函数中测试过，此处不再测试
+			Assert::AreEqual(_pVec->front(), 1);
+			Assert::AreEqual(_pVec->back(), 4);
+			int i = 4;
+			for(_vInt::reverse_iterator _it = _pVec->rbegin(); _it < _pVec->rend(); _it++, i--){
+				Assert::AreEqual(*_it, i);
+			}
 
+			//const
+			int num[] = {1, 2};
+			const _vInt vec_const(num, 2);
+			Assert::AreEqual(vec_const.at(0), 1);
+			Assert::AreEqual(vec_const.at(1), 2);
+			Assert::AreEqual(vec_const.front(), 1);
+			Assert::AreEqual(vec_const.back(), 2);
+			i = 1;
+			for(_vInt::const_iterator _it = vec_const.begin(); _it < vec_const.end(); _it++, i++){
+				Assert::AreEqual(*_it, i);
+			}
+			i = 2;
+			for(_vInt::const_reverse_iterator _it = vec_const.begin(); _it < vec_const.end(); _it++, i--){
+				Assert::AreEqual(*_it, i);
+			}
+
+			Assert::AreEqual(_pVec->empty(), false);
+			_pVec->clear();
+			Assert::AreEqual(_pVec->empty(), true);
+		}
+
+		[TestMethod]
+		void TestIterator(){
+			//仅测试:+=, -=, +, -, []
+			Assert::AreEqual(*(_pVec->begin() + 2), 3);
+			Assert::AreEqual(*(_pVec->end() - 2), 3);
+			Assert::AreEqual(_pVec->end() - _pVec->begin(), difference_type(4));
+			_vInt::iterator _it = _pVec->begin();
+			_it += 2;
+			Assert::AreEqual(*_it, 3);
+			_it -= 1;
+			Assert::AreEqual(*_it, 2);
+			Assert::AreEqual(_it[2], 4);
+
+		}
 
 	};
 }

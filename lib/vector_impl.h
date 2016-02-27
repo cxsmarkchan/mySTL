@@ -271,8 +271,8 @@ typename vector<T, _Alloc>::difference_type vector<T, _Alloc>::reserve(size_type
 		}
 		_diff = _new_arr - _arr;
 		_arr = _new_arr;
+		_capacity = new_capacity;
 	}
-	_capacity = new_capacity;
 	return _diff;
 }
 
