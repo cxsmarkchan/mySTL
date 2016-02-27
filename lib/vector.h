@@ -238,13 +238,13 @@ public:
 
 protected:
 	// expand or shrink if necessary
-	void expand();
-	void shrink();
+	difference_type expand();
+	difference_type shrink();
 	
 public:
 	//swap
 	void swap(_vecT& c2);//swap the elements of this and c2
-	friend void swap(_vecT& c1, _vecT& c2);//swap the elements of c1 and c2
+	//friend void swap(_vecT& c1, _vecT& c2);//swap the elements of c1 and c2
 
 
 // Query

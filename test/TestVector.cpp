@@ -19,6 +19,7 @@ namespace test
 	public: 
 		typedef vector<int> _vInt;
 		typedef _vInt::size_type size_type;
+		typedef _vInt::difference_type difference_type;
 		_vInt* _pVec;
 
 	public:
@@ -191,6 +192,80 @@ namespace test
 			Assert::AreEqual(_pVec->at(7), 1);
 			Assert::AreEqual(_pVec->at(8), 2);
 		}
+
+		[TestMethod]
+		void TestClear(){
+			_pVec->clear();
+			Assert::AreEqual(_pVec->size(), (size_type)0);
+		}
+
+		[TestMethod]
+		void TestErase(){
+			_vInt::iterator _pos = _pVec->begin() + 1;
+			Assert::AreEqual(*(_pVec->erase(_pos)), 3);
+			Assert::AreEqual(_pVec->size(), (size_type)3);
+
+			_vInt::iterator _begin = _pVec->begin();
+			_vInt::iterator _end = _pVec->begin() + 2;
+			Assert::AreEqual(*(_pVec->erase(_begin, _end)), 4);
+			Assert::AreEqual(_pVec->size(), (size_type)1);
+		}
+
+		[TestMethod]
+		void TestResize(){
+			Assert::AreEqual(_pVec->resize(2), (difference_type)0);
+			Assert::AreEqual(_pVec->size(), (size_type)2);
+			Assert::AreEqual(_pVec->capacity(), (size_type)4);
+			_pVec->resize(6, 1);
+			Assert::AreEqual(_pVec->at(0), 1);
+			Assert::AreEqual(_pVec->at(1), 2);
+			Assert::AreEqual(_pVec->at(2), 1);
+			Assert::AreEqual(_pVec->at(3), 1);
+			Assert::AreEqual(_pVec->at(4), 1);
+			Assert::AreEqual(_pVec->at(5), 1);
+		}
+
+		[TestMethod]
+		void TestReserve(){
+			Assert::AreEqual(_pVec->reserve(2), (difference_type)0);
+			Assert::AreEqual(_pVec->size(), (size_type)4);
+			Assert::AreEqual(_pVec->capacity(), (size_type)4);
+			
+			_pVec->reserve(6);
+			Assert::AreEqual(_pVec->size(), (size_type)4);
+			Assert::AreEqual(_pVec->capacity(), (size_type)6);
+		}
+
+		[TestMethod]
+		void TestSwap(){
+			int num[] = {5, 6};
+			_vInt vec2(num, 2);
+			_pVec->swap(vec2);
+			Assert::AreEqual(_pVec->size(), (size_type)2);
+			Assert::AreEqual(_pVec->capacity(), (size_type)2);
+			Assert::AreEqual(_pVec->at(0), 5);
+			Assert::AreEqual(_pVec->at(1), 6);
+			Assert::AreEqual(vec2.size(), (size_type)4);
+			Assert::AreEqual(vec2.capacity(), (size_type)4);
+			Assert::AreEqual(vec2[0], 1);
+			Assert::AreEqual(vec2[1], 2);
+			Assert::AreEqual(vec2[2], 3);
+			Assert::AreEqual(vec2[3], 4);
+
+			//swap(*_pVec, vec2);
+			/*Assert::AreEqual(_pVec->size(), (size_type)4);
+			Assert::AreEqual(_pVec->capacity(), (size_type)4);
+			Assert::AreEqual(_pVec->at(0), 1);
+			Assert::AreEqual(_pVec->at(1), 2);
+			Assert::AreEqual(_pVec->at(2), 3);
+			Assert::AreEqual(_pVec->at(3), 4);
+			Assert::AreEqual(vec2.size(), (size_type)2);
+			Assert::AreEqual(vec2.capacity(), (size_type)2);
+			Assert::AreEqual(vec2[0], 5);
+			Assert::AreEqual(vec2[1], 6);*/
+		}
+
+
 
 	};
 }

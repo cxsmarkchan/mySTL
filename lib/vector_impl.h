@@ -279,14 +279,16 @@ typename vector<T, _Alloc>::difference_type vector<T, _Alloc>::reserve(size_type
 
 // expand if necessary
 template<class T, class _Alloc>
-void vector<T, _Alloc>::expand(){
-	if(_capacity <= _size) reserve(_capacity * 2);
+typename vector<T, _Alloc>::difference_type vector<T, _Alloc>::expand(){
+	if(_capacity <= _size) return reserve(_capacity * 2);
+	else return 0;
 }
 
 // shrink if necessary
 template<class T, class _Alloc>
-void vector<T, _Alloc>::shrink(){
-	if(_size < _capacity / 4) reserve(_capacity / 2);
+typename vector<T, _Alloc>::difference_type vector<T, _Alloc>::shrink(){
+	if(_size < _capacity / 4) return reserve(_capacity / 2);
+	else return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -306,20 +308,21 @@ void vector<T, _Alloc>::swap(vector<T, _Alloc>& c2){
 	c2._arr = _tmp_arr;
 }
 
-template<class T, class _Alloc>
+//采用友元函数，总是报错“无法解析的外部符号”，暂时放在这里。
+/*template<class T, class _Alloc>
 void swap(vector<T, _Alloc>& c1, vector<T, _Alloc>& c2){
-	size_type _tmp_size = c1._size;
+	typename vector<T, _Alloc>::size_type _tmp_size = c1._size;
 	c1._size = c2._size;
 	c2._size = _tmp_size;
 
-	size_type _tmp_capacity = c1._capacity;
+	typename vector<T, _Alloc>::size_type _tmp_capacity = c1._capacity;
 	c1._capacity = c2._capacity;
 	c2._capacity = _tmp_capacity;
 
 	T* _tmp_arr = c1._arr;
 	c1._arr = c2._arr;
 	c2._arr = _tmp_arr;
-}
+}*/
 
 //////////////////////////////////////////////////////////////////////
 // Query
