@@ -232,9 +232,9 @@ public:
 
 public:
 	//about size
-	void resize(size_type new_size);
-	void resize(size_type new_size, const T& elem_fill);
-	void reserve(size_type new_capacity);
+	difference_type resize(size_type new_size);
+	difference_type resize(size_type new_size, const T& elem_fill);
+	difference_type reserve(size_type new_capacity);
 
 protected:
 	// expand or shrink if necessary

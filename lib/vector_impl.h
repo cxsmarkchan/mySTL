@@ -145,13 +145,14 @@ void vector<T, _Alloc>::assign(size_type n, const T& elem){
 template<class T, class _Alloc>
 typename vector<T, _Alloc>::iterator vector<T, _Alloc>::insert(const_iterator pos, const T& elem){
 	if(_capacity <= _size){
-		reserve(_capacity * 2);
+		pos += reserve(_capacity * 2);
 	}
 	iterator _pos = _make_iterator(pos);
 	_size++;
 	for(iterator cur = end() - 1; cur > _pos; cur--){
 		*cur = *(cur - 1);
 	}
+	*_pos = elem;
 	return _pos;
 }
 
@@ -159,7 +160,7 @@ typename vector<T, _Alloc>::iterator vector<T, _Alloc>::insert(const_iterator po
 template<class T, class _Alloc>
 void vector<T, _Alloc>::insert(const_iterator pos, size_type n, const_reference elem){
 	if(_capacity < _size + n){
-		reserve((_size + n) * 2);
+		pos += reserve((_size + n) * 2);
 	}
 
 	_size += n;
@@ -178,7 +179,7 @@ template<class T, class _Alloc>
 void vector<T, _Alloc>::insert(const_iterator pos, const_iterator Beg, const_iterator End){
 	difference_type n = End - Beg;
 	if(_capacity < _size + n){
-		reserve((_size + n) * 2);
+		pos += reserve((_size + n) * 2);
 	}
 
 	_size += n;
@@ -187,7 +188,9 @@ void vector<T, _Alloc>::insert(const_iterator pos, const_iterator Beg, const_ite
 	for(iterator cur = end() - 1; cur >= _insertEnd; cur--){
 		*cur = *(cur - n);
 	}
-	for(iterator cur_to = _insertBegin, const_iterator cur_from = Beg; cur_to < _insertEnd; cur_to++, cur_from++){
+	iterator cur_to = _insertBegin;
+	const_iterator cur_from = Beg;
+	for(; cur_to < _insertEnd; cur_to++, cur_from++){
 		*cur_to = *cur_from;
 	}
 }
@@ -233,26 +236,31 @@ typename vector<T, _Alloc>::iterator vector<T, _Alloc>::erase(const_iterator Beg
 //////////////////////////////////////////////////////////////////////////////////////////
 // about size
 template<class T, class _Alloc>
-void vector<T, _Alloc>::resize(size_type new_size){
+typename vector<T, _Alloc>::difference_type vector<T, _Alloc>::resize(size_type new_size){
+	difference_type _diff = 0;
 	if(_size <= new_size){
-		reserve(new_size);
+		_diff = reserve(new_size);
 	}
 	_size = new_size;
+	return _diff;
 }
 
 template<class T, class _Alloc>
-void vector<T, _Alloc>::resize(size_type new_size, const T& elem_fill){
+typename vector<T, _Alloc>::difference_type vector<T, _Alloc>::resize(size_type new_size, const T& elem_fill){
+	difference_type _diff = 0;
 	if(_size <= new_size){
-		reserve(new_size);
+		_diff = reserve(new_size);
 		for(size_type i = _size; i < new_size; i++){
 			_arr[i] = elem_fill;
 		}
 	}
 	_size = new_size;
+	return _diff;
 }
 
 template<class T, class _Alloc>
-void vector<T, _Alloc>::reserve(size_type new_capacity){
+typename vector<T, _Alloc>::difference_type vector<T, _Alloc>::reserve(size_type new_capacity){
+	difference_type _diff = 0;
 	if(_size <= new_capacity){
 		T* _new_arr = new T[new_capacity];
 		if(_arr != NULL){
@@ -261,9 +269,11 @@ void vector<T, _Alloc>::reserve(size_type new_capacity){
 			}
 			delete[] _arr;
 		}
+		_diff = _new_arr - _arr;
 		_arr = _new_arr;
 	}
 	_capacity = new_capacity;
+	return _diff;
 }
 
 

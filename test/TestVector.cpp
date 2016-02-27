@@ -164,5 +164,33 @@ namespace test
 				Assert::AreEqual(_pVec->at(i), 1);
 			}
 		}
+
+		[TestMethod]
+		void TestInsert(){
+			_vInt::iterator _pos = _pVec->insert(_pVec->begin(), 0); //0, 1, 2, 3, 4
+			Assert::AreEqual(_pVec->size(), (size_type)5);
+			for(int i = 0; i < 5; i++){
+				Assert::AreEqual(_pVec->at(i), i);
+			}
+			Assert::AreEqual(*_pos, 0);
+
+			_pVec->insert((_vInt::const_iterator)(_pVec->begin() + 1), (size_type)2, 10); // 0, 10, 10, 1, 2, 3, 4
+			Assert::AreEqual(_pVec->size(), (size_type)7);
+			Assert::AreEqual(_pVec->at(0), 0);
+			Assert::AreEqual(_pVec->at(1), 10);
+			Assert::AreEqual(_pVec->at(2), 10);
+			Assert::AreEqual(_pVec->at(3), 1);
+			Assert::AreEqual(_pVec->at(4), 2);
+			Assert::AreEqual(_pVec->at(5), 3);
+			Assert::AreEqual(_pVec->at(6), 4);
+
+			int a[] = {1, 2};
+			_vInt vec(a, 2);
+			_pVec->insert(_pVec->end(), vec.begin(), vec.end()); // 0, 10, 10, 1, 2, 3, 4, 1, 2
+			Assert::AreEqual(_pVec->size(), (size_type)9);
+			Assert::AreEqual(_pVec->at(7), 1);
+			Assert::AreEqual(_pVec->at(8), 2);
+		}
+
 	};
 }
