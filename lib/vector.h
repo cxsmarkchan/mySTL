@@ -25,7 +25,7 @@ public:
 	typedef typename V::pointer _innerPointer;
 	typedef typename V::value_type value_type;
 	typedef typename V::difference_type difference_type;
-	typedef typename V::reference reference;
+	typedef typename reference reference;
 	friend V;
 
 public:
