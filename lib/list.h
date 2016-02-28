@@ -85,6 +85,125 @@ public:
 	_Myiter operator--(){return _Iter::operator++(0);}
 }
 
+template<class T, class _Alloc = allocator<T>>
+class list_node{
+public:
+	typedef list_node<T, _Alloc> _Mylistnode;
+	typedef typename _Alloc::value_type value_type;
+	typedef typename _Alloc::pointer pointer;
+	typedef typename _Alloc::reference reference;
+	typedef typename _Alloc::const_pointer const_pointer;
+	typedef typename _Alloc::const_reference const_reference;
+	typedef typename _Alloc::size_type size_type;
+	typedef typename _Alloc::difference_type difference_type;
+};
+
+#include <list>
+template<class T, class _Alloc = allocator<T>>
+class list{
+public:
+	//typedefs
+	typedef list<T, _Alloc> _Mylist;
+	typedef allocator<list_node<T, _Alloc>> _nodeAlloc;
+	typedef typename _nodeAlloc::pointer = node_pointer;
+	typedef typename _Alloc::value_type value_type;
+	typedef typename _Alloc::pointer pointer;
+	typedef typename _Alloc::reference reference;
+	typedef typename _Alloc::const_pointer const_pointer;
+	typedef typename _Alloc::const_reference const_reference;
+	typedef typename _Alloc::size_type size_type;
+	typedef typename _Alloc::difference_type difference_type;
+	typedef _list_iterator_base<T, pointer, reference> iterator;
+	typedef _list_iterator_base<T, const_pointer, const_reference> const_iterator;
+	typedef _list_inverse_iterator<iterator> inverse_iterator;
+	typedef _list_inverse_iterator<const_iterator> const_reverse_iterator;
+
+public:
+	//constructions & destruction
+	list();
+	list(size_type init_size);
+	list(size_type init_size, T);
+	list(const _Mylist& _right);
+	list(const_iterator _begin, const_iterator _end);
+	~list();
+
+public:
+	//Updating
+	//=
+	_Mylist& operator=(const _Mylist& _right);
+
+	//assign
+	void assign(size_type n, const T& elem);
+	void assign(const_iterator _begin, const_iterator _end);
+
+	//insert
+	iterator insert(iterator pos, const T& elem);
+	iterator insert(iterator pos, size_type n, const T& elem);
+	iterator insert(iterator pos, const_iterator _begin, const_iterator _end);
+
+	//clear, erase
+	void clear();
+	iterator erase(iterator pos);
+
+	//push, pop
+	void push_back(const T& elem);
+	void pop_back();
+	void push_front(const T& elem);
+	void pop_front();
+
+	//resize
+	void resize(size_type n);
+	void resize(size_type n, const T& elem);
+
+	//swap
+	void swap(const _Mylist& _right);
+
+public:
+	//Queries
+	//begin, end
+	iterator begin();
+	const_iterator begin() const;
+	iterator end();
+	const_iterator end() const;
+	//rbegin, rend
+	reverse_iterator rbegin();
+	const_reverse_iterator rbegin() const;
+	reverse_iterator rend();
+	const_reverse_iterator rend() const;
+	//front, back
+	reference front();
+	const_reference front() const;
+	reference back();
+	const_reference back() const;
+	//empty
+	bool empty();
+	//size
+	size_type size();
+	//size_type max_size()
+	
+
+public:
+	//advanced operations
+	//merge
+	void merge(const _Mylist& _right);
+	void merge(const _Mylist& _right, bool (*is_less_than)(const T&, const T&));
+	//splice
+	void splice(iterator pos, const _Mylist& _right);
+	void splice(iterator pos, const _Mylist& _right, iterator pos2);
+	void splice(iterator pos, const _Mylist& _right, iterator _begin, iterator _end);
+	//remove elements with a certain value
+	void remove(const T& value);
+	void remove_if(bool (*cond)(const T&));
+	//reverse
+	void reverse();
+	//unique
+	void unique();
+	//sort
+	void sort();
+	void sort(bool (*is_less_than)(const T&));
+
+};
+
 _CXS_NS_END
 
 #endif
