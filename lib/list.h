@@ -25,7 +25,7 @@ public:
 	_list_iterator_base(_innerPointer p):_ptr(p){}
 	_list_iterator_base(const _Myiter& _it):_ptr(_it._ptr){}
 	template<class _Iter>
-	_list_iterator_base(const _Iter& _it):_ptr(_it._ptr){}
+	_list_iterator_base(const _Iter& _it):_ptr(_it.getPointer()){}
 	
 public:
 	//pointer and reference
@@ -52,6 +52,9 @@ public:
 	bool operator!=(const _Myiter& _right) const{return _ptr != _right._ptr;}
 
 public:
+	_innerPointer getPointer() const{return _ptr;}
+
+protected:
 	_innerPointer _ptr;
 
 };
