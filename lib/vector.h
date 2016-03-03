@@ -195,6 +195,7 @@ public:
 	vector();//Default
 	vector(const size_type size);//A vector with n datafields construted by default construction functions.
 	vector(const _vecT& _right);//Copy
+	vector(_vecT&& _right);//move
 	vector(const T* arr, const size_type len);//Copy of an array of T
 	vector(size_type n, const T& elem);//A vector with n elements of elem
 	template<class _Iter>
@@ -205,6 +206,7 @@ public:
 // Operators
 public:
 	_vecT& operator=(const _vecT& _right);
+	_vecT& operator=(_vecT&& _right); //move
 	reference operator[](size_type n);
 	const_reference operator[](size_type n) const;
 

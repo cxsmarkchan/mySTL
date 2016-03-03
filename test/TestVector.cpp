@@ -1,5 +1,7 @@
 #include "stdafx.h"
+#include <iostream>
 #include "vector.h"
+#include "algorithm.h"
 
 
 using namespace System;
@@ -101,16 +103,22 @@ namespace test
 			Assert::AreEqual(vec_4[1], 5);
 
 			_vInt::iterator _end = vec_3.end() - 1;
-			_vInt vec_5(vec_3.begin(), _end);
+			_vInt vec_5(vec_3.begin(), _end);//vector(const_iterator _begin, const_iterator _end)
 			Assert::AreEqual(vec_5.size(), (size_type)2);
 			Assert::AreEqual(vec_5[0], 1);
 			Assert::AreEqual(vec_5[1], 3);
+
+			_vInt vec_6 = std::move(vec_4);
+			Assert::AreEqual(vec_6.size(), (size_type)2);
+			Assert::AreEqual(vec_6[0], 5);
+			Assert::AreEqual(vec_6[1], 5);
+
 			
 		}
 
 		[TestMethod]
 		void TestOperators(){
-			//等号和非const的下标
+			//等号左值和非const的下标
 			_vInt vec;
 			vec = *_pVec;
 			Assert::AreEqual(vec.size(), (size_type)4);
@@ -126,6 +134,15 @@ namespace test
 			Assert::AreEqual(vec2[1], 2);
 			Assert::AreEqual(vec2[2], 3);
 			Assert::AreEqual(vec2[3], 4);
+
+			//等号右值
+			vec = std::move(*_pVec);
+			Assert::AreEqual(vec.size(), (size_type)4);
+			Assert::AreEqual(vec[0], 1);
+			Assert::AreEqual(vec[1], 2);
+			Assert::AreEqual(vec[2], 3);
+			Assert::AreEqual(vec[3], 4);
+
 		}
 
 		[TestMethod]
@@ -252,8 +269,8 @@ namespace test
 			Assert::AreEqual(vec2[2], 3);
 			Assert::AreEqual(vec2[3], 4);
 
-			//swap(*_pVec, vec2);
-			/*Assert::AreEqual(_pVec->size(), (size_type)4);
+			swap(*_pVec, vec2);
+			Assert::AreEqual(_pVec->size(), (size_type)4);
 			Assert::AreEqual(_pVec->capacity(), (size_type)4);
 			Assert::AreEqual(_pVec->at(0), 1);
 			Assert::AreEqual(_pVec->at(1), 2);
@@ -262,7 +279,7 @@ namespace test
 			Assert::AreEqual(vec2.size(), (size_type)2);
 			Assert::AreEqual(vec2.capacity(), (size_type)2);
 			Assert::AreEqual(vec2[0], 5);
-			Assert::AreEqual(vec2[1], 6);*/
+			Assert::AreEqual(vec2[1], 6);
 		}
 
 		[TestMethod]

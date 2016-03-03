@@ -34,6 +34,16 @@ vector<T, _Alloc>::vector(const _vecT& _right){
 }
 
 template<class T, class _Alloc>
+vector<T, _Alloc>::vector(_vecT&& _right){
+	if(_arr != NULL)
+		delete[] _arr;
+	_size = _right._size;
+	_capacity = _right._capacity;
+	_arr = _right._arr;
+	_right._arr = NULL;
+}
+
+template<class T, class _Alloc>
 vector<T, _Alloc>::vector(const T* arr, size_type len){
 	_size = _capacity = len;
 	_arr = new T[_capacity];
@@ -81,6 +91,17 @@ vector<T, _Alloc>& vector<T, _Alloc>::operator=(const vector<T, _Alloc>& _right)
 		for(size_type i = 0; i < _size; i++){
 			_arr[i] = _right[i];
 		}
+	}
+	return *this;
+}
+
+template<class T, class _Alloc>
+vector<T, _Alloc>& vector<T, _Alloc>::operator=(_vecT&& _right){
+	if(this != &_right){
+		_size = _right._size;
+		_capacity = _right._capacity;
+		_arr = _right._arr;
+		_right._arr = NULL;
 	}
 	return *this;
 }
