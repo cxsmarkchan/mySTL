@@ -135,6 +135,7 @@ public:
 	list(size_type init_size);
 	list(size_type init_size, const T& elem);
 	list(const _Mylist& _right);
+	list(_Mylist&& _right);
 	list(const_iterator _begin, const_iterator _end);
 	~list();
 
@@ -142,6 +143,7 @@ public:
 	//Updating
 	//=
 	_Mylist& operator=(const _Mylist& _right);
+	_Mylist& operator=(_Mylist&& _right);
 
 	//assign
 	void assign(size_type n, const T& elem);

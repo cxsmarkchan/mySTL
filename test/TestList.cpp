@@ -18,6 +18,8 @@ namespace test
 		typedef list<int> _Mylist;
 		typedef _Mylist::size_type size_type;
 		typedef _Mylist::difference_type difference_type;
+	private:
+		_Mylist *pList;
 
 	public: 
 		/// <summary>
@@ -58,6 +60,16 @@ namespace test
 		//
 		#pragma endregion 
 
+		[TestInitialize()]
+		void TestInitialize(){
+			pList = new _Mylist(5, 10);
+		}
+
+		[TestCleanup()]
+		void TestCleanup(){
+			delete pList;
+		}
+
 		[TestMethod]
 		void TestConstruction()
 		{
@@ -91,5 +103,26 @@ namespace test
 				Assert::AreEqual(*_it, 10);
 			}
 		};
+
+		[TestMethod]
+		void TestOperators(){
+			_Mylist lst1;
+			_Mylist lst2;
+
+			lst1 = *pList;
+			lst2 = std::move(*pList);
+
+			_Mylist::const_iterator _it;
+
+			Assert::AreEqual(lst1.size(), (size_type)5);
+			for(_it = lst1.begin(); _it != lst1.end(); _it++){
+				Assert::AreEqual(*_it, 10);
+			}
+
+			Assert::AreEqual(lst2.size(), (size_type)5);
+			for(_it = lst2.begin(); _it != lst2.end(); _it++){
+				Assert::AreEqual(*_it, 10);
+			}
+		}
 	};
 }
