@@ -6,6 +6,7 @@
 
 #include "cxs-commons.h"
 #include "list.h"
+#include "algorithm.h"
 
 _CXS_NS_BEGIN
 
@@ -60,7 +61,7 @@ list<T, _Alloc>::list(const _Mylist& _right):_size(_right._size){
 }
 
 template<class T, class _Alloc>
-list<T, _Alloc>::list(_Mylist&& _right):_size(_right.size), _head(_right._head), _tail(_right._tail){
+list<T, _Alloc>::list(_Mylist&& _right):_size(_right._size), _head(_right._head), _tail(_right._tail){
 	_right._head = NULL;
 	_right._tail = NULL;
 }
@@ -103,7 +104,7 @@ list<T, _Alloc>& list<T, _Alloc>::operator=(const _Mylist& _right){
 
 		_Mylistnode *tmp = _head;
 		_Mylistnode *del;
-		while(!tmp != NULL){
+		while(tmp != NULL){
 			del = tmp;
 			tmp = tmp->next;
 			delete del;
@@ -126,7 +127,7 @@ list<T, _Alloc>& list<T, _Alloc>::operator=(_Mylist&& _right){
 	if(this != &_right){
 		_Mylistnode *tmp = _head;
 		_Mylistnode *del;
-		while(!tmp != NULL){
+		while(tmp != NULL){
 			del = tmp;
 			tmp = tmp->next;
 			delete del;
@@ -140,6 +141,165 @@ list<T, _Alloc>& list<T, _Alloc>::operator=(_Mylist&& _right){
 	return *this;
 }
 
+/////////////////////////////////////////////////////////////////
+//assign
+template<class T, class _Alloc>
+void list<T, _Alloc>::assign(size_type n, const T& elem){
+	clear();
+	_Mylistnode *cur = _head;
+	for(size_type i = 0; i < n; i++){
+		cur->next = new _Mylistnode(elem, cur);
+		cur = cur->next;
+	}
+	cur->next = _tail;
+	_tail->prev = cur;
+	_size = n;
+}
+
+template<class T, class _Alloc>
+void list<T, _Alloc>::assign(const_iterator _begin, const_iterator _end){
+	clear();
+	_Mylistnode *cur = _head;
+	for(const_iterator _it = _begin; _it != _end; _it++){
+		cur->next = new _Mylistnode(*_it, cur);
+		cur = cur->next;
+		_size++;
+	}
+	cur->next = _tail;
+	_tail->prev = cur;
+}
+
+/////////////////////////////////////////////////////////////////////
+//insert functions
+template<class T, class _Alloc>
+typename list<T, _Alloc>::iterator list<T, _Alloc>::insert(iterator pos, const T& elem){
+	_Mylistnode *_cur = pos.getPointer();
+	_Mylistnode *_ins = new _Mylistnode(elem, _cur->prev, _cur);
+	_cur->prev->next = _ins;
+	_cur->prev = _ins;
+	_size++;
+	return iterator(_ins);
+}
+
+template<class T, class _Alloc>
+typename list<T, _Alloc>::iterator list<T, _Alloc>::insert(iterator pos, size_type n, const T& elem){
+	_Mylistnode *_cur = pos.getPointer();
+	for(size_type i = 0; i < n; i++){
+		_Mylistnode *_ins = new _Mylistnode(elem, _cur->prev, _cur);
+		_cur->prev = _ins;
+		_cur = _cur->prev;
+		_size++;
+	}
+	_cur->prev->next = _cur;
+	return _cur;
+}
+
+
+template<class T, class _Alloc>
+typename list<T, _Alloc>::iterator list<T, _Alloc>::insert(iterator pos, const_iterator _begin, const_iterator _end){
+	_Mylistnode *_cur = pos.getPointer();
+	for(const_iterator _it = _end; _it != _begin;){
+		_Mylistnode *_ins = new _Mylistnode(*(--_it), _cur->prev, _cur);
+		_cur->prev = _ins;
+		_cur = _cur->prev;
+		_size++;
+	}
+	_cur->prev->next = _cur;
+	return _cur;
+}
+/////////////////////////////////////////////////////////////////////
+//erase functions
+
+//clear
+template<class T, class _Alloc>
+void list<T, _Alloc>::clear(){
+	while(_head->next != _tail){
+		_Mylistnode *tmp = _head->next;
+		_head->next = _head->next->next;
+		delete tmp;
+	}
+	_tail->prev = _head;
+	_size = 0;
+}
+
+//erase
+template<class T, class _Alloc>
+typename list<T, _Alloc>::iterator list<T, _Alloc>::erase(iterator pos){
+	_Mylistnode *_cur = pos.getPointer();
+	_Mylistnode *_prev = _cur->prev;
+	_Mylistnode *_next = _cur->next;
+	_prev->next = _next;
+	_next->prev = _prev;
+	delete _cur;
+	_size--;
+	return iterator(_next);
+}
+
+/////////////////////////////////////////////////////////////////////
+//push and pop
+template<class T, class _Alloc>
+void list<T, _Alloc>::push_back(const T& elem){
+	_Mylistnode *_cur = new _Mylistnode(elem, _tail->prev, _tail);
+	_tail->prev->next = _cur;
+	_tail->prev = _cur;
+	_size++;
+}
+
+
+template<class T, class _Alloc>
+void list<T, _Alloc>::push_front(const T& elem){
+	_Mylistnode *_cur = new _Mylistnode(elem, _head, _head->next);
+	_head->next->prev = _cur;
+	_head->next = _cur;
+	_size++;
+}
+
+template<class T, class _Alloc>
+void list<T, _Alloc>::pop_back(){
+	_Mylistnode *_cur = _tail->prev;
+	_tail->prev = _tail->prev->prev;
+	_tail->prev->next = _tail;
+	delete _cur;
+	_size--;
+}
+
+template<class T, class _Alloc>
+void list<T, _Alloc>::pop_front(){
+	_Mylistnode *_cur = _head->next;
+	_head->next = _head->next->next;
+	_head->next->prev = _head;
+	delete _cur;
+	_size--;
+}
+
+////////////////////////////////////////////////////////////////
+//resize
+template<class T, class _Alloc>
+void list<T, _Alloc>::resize(size_type n){
+	resize(n, T());
+}
+
+template<class T, class _Alloc>
+void list<T, _Alloc>::resize(size_type n, const T& elem){
+	if(_size < n){
+		insert(end(), n - _size, elem);
+	}else{
+		for(size_type i = 0; i < _size - n; i++){
+			_Mylistnode *tmp = _tail->prev;
+			_tail->prev = _tail->prev->prev;
+			delete tmp; 
+		}
+		_tail->prev->next = _tail;
+		_size = n;
+	}
+}
+
+//////////////////////////////////////////////////////////////////
+//swap
+template<class T, class _Alloc>
+void list<T, _Alloc>::swap(_Mylist& _right){
+	cxs::swap(*this, _right);
+}
 
 //begin
 template<class T, class _Alloc>

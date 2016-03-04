@@ -169,7 +169,7 @@ public:
 	void resize(size_type n, const T& elem);
 
 	//swap
-	void swap(const _Mylist& _right);
+	void swap(_Mylist& _right);
 
 public:
 	//Queries
