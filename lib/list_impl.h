@@ -301,10 +301,18 @@ void list<T, _Alloc>::swap(_Mylist& _right){
 	cxs::swap(*this, _right);
 }
 
+/////////////////////////////////////////////////////////////////
+//queries
+
 //begin
 template<class T, class _Alloc>
 typename list<T, _Alloc>::iterator list<T, _Alloc>::begin(){
 	return iterator(_head->next);
+}
+
+template<class T, class _Alloc>
+typename list<T, _Alloc>::const_iterator list<T, _Alloc>::begin() const{
+	return const_iterator(_head->next);
 }
 
 //end
@@ -312,6 +320,62 @@ template<class T, class _Alloc>
 typename list<T, _Alloc>::iterator list<T, _Alloc>::end(){
 	return iterator(_tail);
 }
+
+template<class T, class _Alloc>
+typename list<T, _Alloc>::const_iterator list<T, _Alloc>::end() const{
+	return const_iterator(_tail);
+}
+
+//rbegin
+template<class T, class _Alloc>
+typename list<T, _Alloc>::reverse_iterator list<T, _Alloc>::rbegin(){
+	return reverse_iterator(_tail->prev);
+}
+
+template<class T, class _Alloc>
+typename list<T, _Alloc>::const_reverse_iterator list<T, _Alloc>::rbegin() const{
+	return const_reverse_iterator(_tail->prev);
+}
+
+//rend
+template<class T, class _Alloc>
+typename list<T, _Alloc>::reverse_iterator list<T, _Alloc>::rend(){
+	return reverse_iterator(_head);
+}
+
+template<class T, class _Alloc>
+typename list<T, _Alloc>::const_reverse_iterator list<T, _Alloc>::rend() const{
+	return const_reverse_iterator(_head);
+}
+
+//front
+template<class T, class _Alloc>
+typename list<T, _Alloc>::reference list<T, _Alloc>::front(){
+	return _head->next->value;
+}
+
+template<class T, class _Alloc>
+typename list<T, _Alloc>::const_reference list<T, _Alloc>::front() const{
+	return _head->next->value;
+}
+
+
+//back
+template<class T, class _Alloc>
+typename list<T, _Alloc>::reference list<T, _Alloc>::back(){
+	return _tail->prev->value;
+}
+
+template<class T, class _Alloc>
+typename list<T, _Alloc>::const_reference list<T, _Alloc>::back() const{
+	return _tail->prev->value;
+}
+
+template<class T, class _Alloc>
+bool list<T, _Alloc>::empty() const{
+	return (_size == 0);
+}
+
 //size
 template<class T, class _Alloc>
 typename list<T, _Alloc>::size_type list<T, _Alloc>::size() const{

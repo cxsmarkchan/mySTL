@@ -60,10 +60,10 @@ protected:
 };
 
 template<class _Iter>
-class _list_inverse_iterator: public _Iter{
+class _list_reverse_iterator: public _Iter{
 public:
 	//typedefs
-	typedef _list_inverse_iterator<_Iter> _Myiter;
+	typedef _list_reverse_iterator<_Iter> _Myiter;
 	typedef typename _Iter::_innerPointer _innerPointer;
 	typedef typename _Iter::size_type size_type;
 	typedef typename _Iter::difference_type difference_type;
@@ -72,20 +72,19 @@ public:
 
 public:
 	//constructions
-	_list_inverse_iterator():_Iter(){}
-	_list_inverse_iterator(_innerPointer p):_Iter(p){}
-	_list_inverse_iterator(const _Myiter& _right):_Iter(_right._ptr){}
-	_list_inverse_iterator(const _Iter _right):_Iter(_right){}
-	//下面两句的访问权限问题还没有想清楚
+	_list_reverse_iterator():_Iter(){}
+	_list_reverse_iterator(_innerPointer p):_Iter(p){}
+	_list_reverse_iterator(const _Myiter& _right):_Iter(_right._ptr){}
+	_list_reverse_iterator(const _Iter& _right):_Iter(_right){}
 	//template<class _IterOther>
-	//_list_inverse_iterator(const _IterOther& _right):_Iter(_right._ptr){}
+	//_list_reverse_iterator(const _IterOther& _right):_Iter(_right.getPointer()){}
 
 public:
 	//++,--
-	_Myiter& operator++(){return _Iter::operator--();}
-	_Myiter operator++(int){return _Iter::operator--(0);}
-	_Myiter& operator--(){return _Iter::operator++();}
-	_Myiter operator--(){return _Iter::operator++(0);}
+	_Myiter& operator++(){_Iter::operator--(); return *this;}
+	_Myiter operator++(int){return _Myiter(_Iter::operator--(0));}
+	_Myiter& operator--(){_Iter::operator++(); return *this;}
+	_Myiter operator--(int){return _Myiter(_Iter::operator++(0));}
 };
 
 template<class T, class _Alloc = allocator<T>>
@@ -126,8 +125,8 @@ public:
 	typedef typename _Alloc::difference_type difference_type;
 	typedef _list_iterator_base<_Mylist, pointer, reference> iterator;
 	typedef _list_iterator_base<_Mylist, const_pointer, const_reference> const_iterator;
-	typedef _list_inverse_iterator<iterator> reverse_iterator;
-	typedef _list_inverse_iterator<const_iterator> const_reverse_iterator;
+	typedef _list_reverse_iterator<iterator> reverse_iterator;
+	typedef _list_reverse_iterator<const_iterator> const_reverse_iterator;
 
 public:
 	//constructions & destruction

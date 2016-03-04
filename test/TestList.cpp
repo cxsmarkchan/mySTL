@@ -77,6 +77,38 @@ namespace test
 		}
 
 		[TestMethod]
+		void TestIterators(){
+			//测试iterator的功能
+			//->和*
+			list<_Mylist> _order2_list(1, *pList2);
+			list<_Mylist>::iterator _order2_it = _order2_list.begin();
+			Assert::AreEqual(_order2_it->front(), 1);
+			Assert::AreEqual((*_order2_it).front(), 1);
+			//++,--
+			_Mylist::iterator _it = pList2->begin();
+			Assert::AreEqual(*(_it++), 1);
+			Assert::AreEqual(*(++_it), 3);
+			Assert::AreEqual(*(_it--), 3);
+			Assert::AreEqual(*(--_it), 1);
+			//==, !=
+			_Mylist::iterator _it2 = pList2->begin();
+			Assert::AreEqual(_it == _it2, true);
+			Assert::AreEqual(_it != _it2, false);
+			_it2++;
+			Assert::AreEqual(_it == _it2, false);
+			Assert::AreEqual(_it != _it2, true);
+			//getPointer
+			Assert::AreEqual(_it.getPointer()->value, 1);
+
+			//reverse_iterator
+			_Mylist::reverse_iterator _rit = pList2->rbegin();
+			Assert::AreEqual(*(_rit++), 5);
+			Assert::AreEqual(*(++_rit), 3);
+			Assert::AreEqual(*(_rit--), 3);
+			Assert::AreEqual(*(--_rit), 5);
+		};
+
+		[TestMethod]
 		void TestConstruction()
 		{
 			//
@@ -281,6 +313,41 @@ namespace test
 			for(int i = 0; _it2 != pList2->end(); _it2++, i++){
 				Assert::AreEqual(*_it2, benchmark2[i]);
 			}
+		};
+
+		[TestMethod]
+		void TestQueries(){
+			const _Mylist cList = *pList2;
+			//non const
+			int i = 1;
+			for(_Mylist::iterator _it = pList2->begin(); _it != pList2->end(); _it++){
+				Assert::AreEqual(*_it, i++);
+			}
+			i = 5;
+			for(_Mylist::reverse_iterator _it = pList2->rbegin(); _it != pList2->rend(); _it++){
+				Assert::AreEqual(*_it, i--);
+			}
+			Assert::AreEqual(pList2->front(), 1);
+			Assert::AreEqual(pList2->back(), 5);
+
+			//const
+			i = 1;
+			for(_Mylist::const_iterator _it = cList.begin(); _it != cList.end(); _it++){
+				Assert::AreEqual(*_it, i++);
+			}
+			i = 5;
+			for(_Mylist::const_reverse_iterator _it = cList.rbegin(); _it != cList.rend(); _it++){
+				Assert::AreEqual(*_it, i--);
+			}
+			Assert::AreEqual(cList.front(), 1);
+			Assert::AreEqual(cList.back(), 5);
+			
+			//empty
+			Assert::AreEqual(pList2->empty(), false);
+			pList2->clear();
+			Assert::AreEqual(pList2->empty(), true);
+
+			Assert::AreEqual(cList.size(), (size_type)5);
 		};
 
 	};
