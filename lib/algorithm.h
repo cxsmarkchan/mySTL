@@ -8,6 +8,8 @@
 #include <iostream>
 #include "cxs-commons.h"
 
+_CXS_NS_BEGIN
+
 //swap
 template<class T>
 void swap(T& var1, T& var2){
@@ -15,5 +17,7 @@ void swap(T& var1, T& var2){
 	var1 = std::move(var2);
 	var2 = std::move(tmp);
 }
+
+_CXS_NS_END
 
 #endif

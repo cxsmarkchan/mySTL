@@ -35,8 +35,6 @@ vector<T, _Alloc>::vector(const _vecT& _right){
 
 template<class T, class _Alloc>
 vector<T, _Alloc>::vector(_vecT&& _right){
-	if(_arr != NULL)
-		delete[] _arr;
 	_size = _right._size;
 	_capacity = _right._capacity;
 	_arr = _right._arr;
