@@ -455,6 +455,97 @@ template<class T, class _Alloc>
 void list<T, _Alloc>::splice(iterator pos, _Mylist& _right){
 	splice(pos, _right, _right.begin(), _right.end());
 }
+
+
+//////////////////////////////////////////////////////////////////////
+//remove
+template<class T, class _Alloc>
+void list<T, _Alloc>::remove(const T& value){
+	remove_if(equal_to<T>(value));
+}
+
+template<class T, class _Alloc>
+template<class _Pred>
+void list<T, _Alloc>::remove_if(_Pred pred){
+	for(iterator _it = begin(); _it != end();){
+		if(pred(*_it)){
+			_it = erase(_it);
+		}else{
+			_it++;
+		}
+	}
+}
+
+////////////////////////////////////////////////////////
+//reverse
+template<class T, class _Pred>
+void list<T, _Pred>::reverse(){
+	_Mylistnode *_tmp;
+	for(_Mylistnode *_node = _head; _node != _tail; _node = _node->prev){
+		_tmp = _node->prev;
+		_node->prev = _node->next;
+		_node->next = _tmp;
+	}
+	_tail->next = _tail->prev;
+	_tail->prev = NULL;
+	_tmp = _head;
+	_head = _tail;
+	_tail = _tmp;
+}
+
+///////////////////////////////////////////////////
+//unique
+template<class T, class _Pred>
+void list<T, _Pred>::unique(){
+	if(_size == 0) return;
+	for(iterator _it = ++begin(); _it != end();){
+		iterator _prev = --_it;
+		_it++;
+		if(*_it == *_prev){
+			_it = erase(_it);
+		}else{
+			_it++;
+		}
+	}
+}
+
+//最纠结的……列表sort
+//好久没写快排了，略挑战啊……
+template<class T, class _Alloc>
+template<class _Pred>
+void list<T, _Alloc>::sort(iterator _begin, iterator _end, _Pred _pred){
+	if(_begin == _end) return;
+	//把首个位置_begin作为partition点
+	iterator _head = _begin;
+	_head--; //保存起始位置
+	//_cur遍历列表
+	iterator _cur = _begin;
+	_cur++;
+	while(_cur != _end){
+		if(_pred(*_cur, *_begin)){ //*_cur < *_begin, 插入到_begin前面
+			iterator _tmp = erase_return(_cur++);
+			insert_exist(_begin, _tmp);
+		}else{ //*_begin <= *_cur，不用动作
+			_cur++;
+		}
+	}
+	//以上，所有小于_begin的都在_begin前面，其他的都在_begin后面
+	//分治
+	sort(++_head, _begin, _pred);
+	sort(++_begin, _end, _pred);
+}
+
+template<class T, class _Alloc>
+template<class _Pred>
+void list<T, _Alloc>::sort(_Pred _pred){
+	sort(begin(), end(), _pred);
+}
+
+template<class T, class _Alloc>
+void list<T, _Alloc>::sort(){
+	sort(less<T>());
+}
+
 _CXS_NS_END
 
 #endif

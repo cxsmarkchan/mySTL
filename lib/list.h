@@ -203,29 +203,39 @@ public:
 	//advanced operations
 	//merge
 	//将_right中的所有元素清空，并有序地插入排到本列表中。如果两个元素相等，则本列表的元素在前，_right元素在后。
+	//只有本列表和_right列表均有序的时候，merge的结果才有序。
 	void merge(_Mylist& _right);
 	template<class _Pred>
 	void merge(_Mylist& _right, _Pred _pred);
-	//splice
-	void splice(iterator pos, _Mylist& _right);
-	void splice(iterator pos, _Mylist& _right, iterator pos2);
-	void splice(iterator pos, _Mylist& _right, iterator _begin, iterator _end);
+	//splice，列表拼接
+	void splice(iterator pos, _Mylist& _right);//将_right拼接到pos前，并清空_right
+	void splice(iterator pos, _Mylist& _right, iterator pos2);//将_right中的pos2拼接到pos前，并在_right中删除pos2
+	void splice(iterator pos, _Mylist& _right, iterator _begin, iterator _end);//将_right中[_begin, _end)拼接到pos前，并在_right中删除这些元素
 	//remove elements with a certain value
 	void remove(const T& value);
-	void remove_if(bool (*cond)(const T&));
+	template<class _Pred>
+	void remove_if(_Pred pred);// if _Pred(val), remove val
 	//reverse
 	void reverse();
 	//unique
+	//剔除重复元素，重复判据为连续相等。即：如果两个相等元素中间隔有若干不相等的元素，则这两个元素均会被保留。
 	void unique();
-	//sort
+	//sort，采用快速排序技术，平均时间复杂度O(nlogn)，平均空间复杂度O(logn)
+	//目前采用的算法是以列表第一个元素作为分界点，因此在顺序数组的情况下会出现最坏情况。
 	void sort();
 	template<class _Pred>
 	void sort(_Pred _pred);
+	//stable_sort，采用归并排序技术，似乎标准STL模板中采用的是这种方法
+	void stable_sort();
+	template<class _Pred>
+	void stable_sort(_Pred _pred);
 
 protected:
 	_Mylistnode *_head;
 	_Mylistnode *_tail;
 	size_type _size;
+	template<class _Pred>
+	void sort(iterator _begin, iterator _end, _Pred _pred);
 
 
 };
