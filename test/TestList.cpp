@@ -68,13 +68,13 @@ namespace test
 			for(int i = 1; i <= 5; i++){
 				pList2->push_back(i);
 			}
-		}
+		};
 
 		[TestCleanup()]
 		void TestCleanup(){
 			delete pList1;
 			delete pList2;
-		}
+		};
 
 		[TestMethod]
 		void TestIterators(){
@@ -191,6 +191,7 @@ namespace test
 
 		[TestMethod]
 		void TestInsert(){
+			//insert(pos, elem)
 			int benchmark1[] = {10, 2, 10, 10, 10, 10};
 			pList1->insert(++pList1->begin(), 2);
 			_Mylist::const_iterator _it1 = pList1->begin();
@@ -198,6 +199,7 @@ namespace test
 				Assert::AreEqual(*_it1, benchmark1[i]);
 			}
 
+			//insert(pos, n, elem)
 			int benchmark2[] = {10, 2, 10, 10, 10, 3, 3, 3, 3, 10};
 			pList1->insert(--pList1->end(), 4, 3);
 			_Mylist::const_iterator _it2 = pList1->begin();
@@ -205,13 +207,25 @@ namespace test
 				Assert::AreEqual(*_it2, benchmark2[i]);
 			}
 
+			//insert(pos, begin, end)
 			int benchmark3[] = {10, 2, 10, 10, 10, 3, 3, 3, 3, 10, 1, 2, 3, 4, 5};
 			pList1->insert(pList1->end(), pList2->begin(), pList2->end());
 			_Mylist::const_iterator _it3 = pList1->begin();
 			for(int i = 0; _it3 != pList1->end(); _it3++, i++){
 				Assert::AreEqual(*_it3, benchmark3[i]);
 			}
-		}
+
+			//insert_exist
+			int benchmark4[] = {10, 1, 2, 10, 10, 10, 3, 3, 3, 3, 10, 1, 2, 3, 4, 5};
+			_Mylist::_Mylistnode *node = new _Mylist::_Mylistnode(1);
+			pList1->insert_exist(++(pList1->begin()), _Mylist::iterator(node));
+			Assert::AreEqual(pList1->size(), (size_type)16);
+			_Mylist::const_iterator _it4 = pList1->begin();
+			for(int i = 0; _it4 != pList1->end(); _it4++, i++){
+				Assert::AreEqual(*_it4, benchmark4[i]);
+			}
+
+		};
 
 		[TestMethod]
 		void TestClear(){
@@ -222,17 +236,27 @@ namespace test
 
 		[TestMethod]
 		void TestErase(){
+			//erase(pos)
+			int benchmark1[] = {1, 3, 4, 5};
 			_Mylist::iterator _next = pList2->erase(++pList2->begin());
 
 			Assert::AreEqual(*_next, 3);
 			Assert::AreEqual(pList2->size(), (size_type)4);
-
-			int arr[] = {1, 3, 4, 5};
-
-			_Mylist::const_iterator _it = pList2->begin();
-			for(int i = 0; _it != pList2->end(); _it++, i++){
-				Assert::AreEqual(*_it, arr[i]);
+			_Mylist::const_iterator _it1 = pList2->begin();
+			for(int i = 0; _it1 != pList2->end(); _it1++, i++){
+				Assert::AreEqual(*_it1, benchmark1[i]);
 			}
+
+			//erase_return(pos)
+			int benchmark2[] = {1, 4, 5};
+			_Mylist::iterator _rtn = pList2->erase_return(++pList2->begin());
+			Assert::AreEqual(*_rtn, 3);
+			Assert::AreEqual(pList2->size(), (size_type)3);
+			_Mylist::const_iterator _it2 = pList2->begin();
+			for(int i = 0; _it2 != pList2->end(); _it2++, i++){
+				Assert::AreEqual(*_it2, benchmark2[i]);
+			}
+
 
 		};
 
@@ -350,5 +374,59 @@ namespace test
 			Assert::AreEqual(cList.size(), (size_type)5);
 		};
 
+		[TestMethod]
+		void TestMerge(){
+			_Mylist lst1;
+			_Mylist lst2;
+			lst1.push_back(1);
+			lst1.push_back(3);
+			lst1.push_back(5);
+			lst1.push_back(7);
+			lst1.push_back(9);
+			lst2.push_back(2);
+			lst2.push_back(4);
+			lst2.push_back(6);
+			lst2.push_back(7);
+			lst2.push_back(9);
+			lst1.merge(lst2);
+			Assert::AreEqual(lst2.size(), (size_type)0);
+			Assert::AreEqual(lst1.size(), (size_type)10);
+			int test[] = {1, 2, 3, 4, 5, 6, 7, 7, 9, 9};
+			int i = 0;
+			for(_Mylist::const_iterator _it = lst1.begin(); _it != lst1.end(); _it++){
+				Assert::AreEqual(*_it, test[i++]);
+			}
+		};
+
+		[TestMethod]
+		void TestSplice(){
+			int i;
+			_Mylist::iterator _begin = pList2->begin();
+			_begin++;
+			_Mylist::iterator _end = pList2->end();
+			_end--;
+			_Mylist::iterator _pos = pList1->begin();
+			_pos++;
+			//test1
+			pList1->splice(_pos, *pList2, _begin, _end);
+			Assert::AreEqual(pList1->size(), (size_type)8);
+			Assert::AreEqual(pList2->size(), (size_type)2);
+			int test1[] = {10, 2, 3, 4, 10, 10, 10, 10};
+			i = 0;
+			for(_Mylist::const_iterator _it = pList1->begin(); _it != pList1->end(); _it++){
+				Assert::AreEqual(*_it, test1[i++]);
+			}
+			//test2
+			pList1->splice(pList1->end(), *pList2);
+			Assert::AreEqual(pList1->size(), (size_type)10);
+			Assert::AreEqual(pList2->size(), (size_type)0);
+			int test2[] = {10, 2, 3, 4, 10, 10, 10, 10, 1, 5};
+			i = 0;
+			for(_Mylist::const_iterator _it = pList1->begin(); _it != pList1->end(); _it++){
+				Assert::AreEqual(*_it, test2[i++]);
+			}
+		};
 	};
+
+
 }

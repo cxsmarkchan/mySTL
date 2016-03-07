@@ -170,6 +170,11 @@ public:
 	//swap
 	void swap(_Mylist& _right);
 
+	//新增接口，把节点断开并返回，而不删除
+	iterator erase_return(iterator _it);
+	//新增接口，直接将一个节点插入，而不用复制
+	iterator insert_exist(iterator pos, iterator _it_elem);
+
 public:
 	//Queries
 	//begin, end
@@ -197,12 +202,14 @@ public:
 public:
 	//advanced operations
 	//merge
-	void merge(const _Mylist& _right);
-	void merge(const _Mylist& _right, bool (*is_less_than)(const T&, const T&));
+	//将_right中的所有元素清空，并有序地插入排到本列表中。如果两个元素相等，则本列表的元素在前，_right元素在后。
+	void merge(_Mylist& _right);
+	template<class _Pred>
+	void merge(_Mylist& _right, _Pred _pred);
 	//splice
-	void splice(iterator pos, const _Mylist& _right);
-	void splice(iterator pos, const _Mylist& _right, iterator pos2);
-	void splice(iterator pos, const _Mylist& _right, iterator _begin, iterator _end);
+	void splice(iterator pos, _Mylist& _right);
+	void splice(iterator pos, _Mylist& _right, iterator pos2);
+	void splice(iterator pos, _Mylist& _right, iterator _begin, iterator _end);
 	//remove elements with a certain value
 	void remove(const T& value);
 	void remove_if(bool (*cond)(const T&));
@@ -212,12 +219,14 @@ public:
 	void unique();
 	//sort
 	void sort();
-	void sort(bool (*is_less_than)(const T&));
+	template<class _Pred>
+	void sort(_Pred _pred);
 
 protected:
 	_Mylistnode *_head;
 	_Mylistnode *_tail;
 	size_type _size;
+
 
 };
 

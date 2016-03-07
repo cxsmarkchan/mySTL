@@ -6,6 +6,7 @@
 
 #include "cxs-commons.h"
 #include "list.h"
+#include "functional.h"
 #include "algorithm.h"
 
 _CXS_NS_BEGIN
@@ -302,6 +303,30 @@ void list<T, _Alloc>::swap(_Mylist& _right){
 }
 
 /////////////////////////////////////////////////////////////////
+//erase_return
+template<class T, class _Alloc>
+typename list<T, _Alloc>::iterator list<T, _Alloc>::erase_return(iterator _it){
+	_Mylistnode *node = _it.getPointer();
+	node->prev->next = node->next;
+	node->next->prev = node->prev;
+	node->prev = node->next = NULL;
+	_size--;
+	return node;
+}
+
+//insert_exist
+template<class T, class _Alloc>
+typename list<T, _Alloc>::iterator list<T, _Alloc>::insert_exist(iterator pos, iterator _it_elem){
+	_Mylistnode *_to = pos.getPointer();
+	_Mylistnode *_from = _it_elem.getPointer();
+	_to->prev->next = _from;
+	_from->prev = _to->prev;
+	_from->next = _to;
+	_to->prev = _from;
+	_size++;
+	return iterator(_from);
+}
+/////////////////////////////////////////////////////////////////
 //queries
 
 //begin
@@ -382,6 +407,54 @@ typename list<T, _Alloc>::size_type list<T, _Alloc>::size() const{
 	return _size;
 }
 
+//merge
+template<class T, class _Alloc>
+template<class _Pred>
+void list<T, _Alloc>::merge(_Mylist& _right, _Pred _pred){
+	iterator _it1 = begin();
+	iterator _it2 = _right.begin();
+	while(_it1 != end() && _it2 != _right.end()){
+		if(_pred(*_it2, *_it1)){ //*_it2 < *_it1 应该把_it2插入到_it1前面
+			iterator _from = _it2;
+			_it2++;
+			iterator _it_tmp = _right.erase_return(_from);
+			insert_exist(_it1, _it_tmp);
+		}else{ //其他情况下，_it1在前面，但因为我们是合并到本列表，所以无需移动
+			_it1++;
+		}
+	}
+	if(_it2 != _right.end()){
+		splice(end(), _right, _it2, _right.end());
+	}
+}
+
+template<class T, class _Alloc>
+void list<T, _Alloc>::merge(_Mylist& _right){
+	merge(_right, less<T>());
+}
+
+//splice
+template<class T, class _Alloc>
+void list<T, _Alloc>::splice(iterator pos, _Mylist& _right, iterator _begin, iterator _end){
+	for(iterator _it = _begin; _it != _end;){
+		iterator _from = _it;
+		_it++;
+		_from = _right.erase_return(_from);
+		insert_exist(pos, _from);
+	}
+}
+
+template<class T, class _Alloc>
+void list<T, _Alloc>::splice(iterator pos, _Mylist& _right, iterator pos2){
+	iterator _end = pos2;
+	iterator _begin = _end++; //这样_begin指向pos2，_end指向pos2后一个位置
+	splice(pos, _right, _begin, _end);
+}
+
+template<class T, class _Alloc>
+void list<T, _Alloc>::splice(iterator pos, _Mylist& _right){
+	splice(pos, _right, _right.begin(), _right.end());
+}
 _CXS_NS_END
 
 #endif
