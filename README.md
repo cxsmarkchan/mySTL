@@ -14,6 +14,6 @@ C++标准模板库：cxsmarkchan的实现
 - algorithm: swap
 - functional: less, greater
 - vector
+- list
 
 ## 目前正在进行
-- list
