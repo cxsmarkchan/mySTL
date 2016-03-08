@@ -234,8 +234,16 @@ protected:
 	_Mylistnode *_head;
 	_Mylistnode *_tail;
 	size_type _size;
+
+protected:
 	template<class _Pred>
 	void sort(iterator _begin, iterator _end, _Pred _pred);
+	template<class _Pred>
+	iterator stable_sort(iterator _begin, size_type _size, _Pred _pred);
+
+	//归并[_begin, _middle)和[_middle, _end)之间的元素
+	template<class _Pred>
+	void inner_merge(iterator _begin, iterator _middle, iterator _end, _Pred _pred);
 
 
 };

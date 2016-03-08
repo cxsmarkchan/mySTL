@@ -423,6 +423,18 @@ namespace test
 			testBenchmark(sorted, sizeof(sorted)/sizeof(int), lst);
 		}
 
+		[TestMethod]
+		void TestStableSort(){
+			int origin[] = {1, 4, 3, 4, 8, 4, 5, 3, 6, 10, 8, 7, 5};
+			int sorted[] = {1, 3, 3, 4, 4, 4, 5, 5, 6, 7, 8, 8, 10};
+			_Mylist lst;
+			for(int i = 0; i < sizeof(origin)/sizeof(int); i++){
+				lst.push_back(origin[i]);
+			}
+			lst.stable_sort();
+			testBenchmark(sorted, sizeof(sorted)/sizeof(int), lst);
+		};
+
 		//测试_test列表内容是否和_benchmark数组中的内容一致
 		void testBenchmark(int *_benchmark, int _size, const _Mylist& _test){
 			int i = 0;

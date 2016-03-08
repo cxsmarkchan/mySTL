@@ -411,6 +411,8 @@ typename list<T, _Alloc>::size_type list<T, _Alloc>::size() const{
 template<class T, class _Alloc>
 template<class _Pred>
 void list<T, _Alloc>::merge(_Mylist& _right, _Pred _pred){
+	if(this == &_right) return;
+
 	iterator _it1 = begin();
 	iterator _it2 = _right.begin();
 	while(_it1 != end() && _it2 != _right.end()){
@@ -436,6 +438,8 @@ void list<T, _Alloc>::merge(_Mylist& _right){
 //splice
 template<class T, class _Alloc>
 void list<T, _Alloc>::splice(iterator pos, _Mylist& _right, iterator _begin, iterator _end){
+	if(this == &_right) return;
+
 	for(iterator _it = _begin; _it != _end;){
 		iterator _from = _it;
 		_it++;
@@ -546,6 +550,57 @@ void list<T, _Alloc>::sort(){
 	sort(less<T>());
 }
 
+template<class T, class _Alloc>
+void list<T, _Alloc>::stable_sort(){
+	stable_sort(less<T>());
+}
+
+template<class T, class _Alloc>
+template<class _Pred>
+void list<T, _Alloc>::stable_sort(_Pred _pred){
+	stable_sort(begin(), _size, _pred);
+}
+
+template<class T, class _Alloc>
+template<class _Pred>
+typename list<T, _Alloc>::iterator list<T, _Alloc>::stable_sort(iterator _begin, size_type _size, _Pred _pred){	
+	switch(_size){
+	case 0:
+		return _begin;
+	case 1:
+		return ++_begin;
+	default:
+		size_type _left = _size / 2;
+		size_type _right = _size - _left;
+		iterator _middle = stable_sort(_begin--, _left, _pred);
+		iterator _end = stable_sort(_middle--, _right, _pred);
+		_begin++;
+		_middle++;
+		inner_merge(_begin, _middle, _end, _pred);
+		return _end;
+	}
+}
+
+template<class T, class _Alloc>
+template<class _Pred>
+void list<T, _Alloc>::inner_merge(iterator _begin, iterator _middle, iterator _end, _Pred _pred){
+	iterator _it1 = _begin;//[_begin, _middle)的指针
+	iterator _it2 = _middle;//[_middle, _end)的指针
+	while(_it1 != _it2 && _it2 != _end){ //_it1未赶上_it2，且_it2未到终点
+		if(_pred(*_it2, *_it1)){ //*_it2要放前面
+			_Mylistnode *_node1 = _it1.getPointer();
+			_Mylistnode *_node2 = (_it2++).getPointer();
+			_node2->prev->next = _node2->next;
+			_node2->next->prev = _node2->prev;
+			_node1->prev->next = _node2;
+			_node2->prev = _node1->prev;
+			_node2->next = _node1;
+			_node1->prev = _node2;
+		}else{
+			_it1++;
+		}
+	}
+}
 _CXS_NS_END
 
 #endif
