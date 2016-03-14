@@ -7,6 +7,7 @@
 #include "cxs-commons.h"
 #include "allocator.h"
 #include "vector.h"
+#include "algorithm.h"
 
 _CXS_NS_BEGIN
 
@@ -22,7 +23,7 @@ public:
 	typedef typename _Alloc::size_type size_type;
 	typedef typename _Alloc::difference_type difference_type;
 public:
-	stack();
+	stack(){}
 	stack(const _Mystack& _right):_vec(_right._vec){}
 	stack(_Mystack&& _right):_vec(std::move(_right._vec)){}
 public:
@@ -30,19 +31,26 @@ public:
 		if(this != &_right){
 			_vec = _right._vec;
 		}
+		return *this;
 	}
-	_Mystack& operator=(_Mystack** _right){
+	_Mystack& operator=(_Mystack&& _right){
 		if(this != &_right){
 			_vec = std::move(_right._vec);
 		}
+		return *this;
 	}
 public:
+	//update
 	void push(const T& elem){
-		_vec.push_back(x);
+		_vec.push_back(elem);
 	}
 	void pop(){
 		_vec.pop_back();
 	}
+	void clear(){
+		_vec.clear();
+	}
+	//query
 	reference top(){
 		return _vec.back();
 	}
@@ -57,14 +65,12 @@ public:
 	}
 public:
 	void swap(_Mystack& _right){
-		swap(*this, _right);
+		cxs::swap(*this, _right);
 	}
 protected:
 	vector<T, _Alloc> _vec;
 };
 
 _CXS_NS_END
-
-template
 
 #endif
